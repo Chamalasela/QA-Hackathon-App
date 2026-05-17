@@ -1,0 +1,20 @@
+{
+  "name": "medicare-clinic-backend",
+  "version": "1.0.0",
+  "description": "MediCare Clinic - Backend API (QA Hackathon 2026)",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "seed": "node src/seed.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "sql.js": "^1.11.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^10.0.0"
+  }
+}
