@@ -27,7 +27,7 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'Clinic Appointment & Patient Management System API'
     },
-    servers: [{ url: process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : `http://localhost:${PORT}` }],
+    servers: [{ url: `http://localhost:${PORT}` }],
     components: {
       securitySchemes: {
         bearerAuth: {

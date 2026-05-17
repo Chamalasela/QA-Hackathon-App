@@ -15,7 +15,7 @@ const router = express.Router();
  *       200: { description: List of doctors }
  */
 router.get('/', authenticateToken, (req, res) => {
-  const db = getDb();
+  const db = getDb(req.user.teamId);
   const doctors = db.prepare(`
     SELECT d.*, u.first_name, u.last_name, u.email, u.phone
     FROM doctors d
@@ -40,7 +40,7 @@ router.get('/', authenticateToken, (req, res) => {
  *       200: { description: Doctor details }
  */
 router.get('/:id', authenticateToken, (req, res) => {
-  const db = getDb();
+  const db = getDb(req.user.teamId);
   const doctor = db.prepare(`
     SELECT d.*, u.first_name, u.last_name, u.email, u.phone
     FROM doctors d
@@ -74,7 +74,7 @@ router.get('/:id', authenticateToken, (req, res) => {
  *       200: { description: Doctor's appointments }
  */
 router.get('/:id/appointments', authenticateToken, (req, res) => {
-  const db = getDb();
+  const db = getDb(req.user.teamId);
   const date = req.query.date || new Date().toISOString().split('T')[0];
 
   const appointments = db.prepare(`
@@ -83,7 +83,6 @@ router.get('/:id/appointments', authenticateToken, (req, res) => {
     ORDER BY a.time_slot ASC
   `).all(req.params.id, date);
 
-  /* BUG P2: N+1 query — fetching patient details one by one instead of a JOIN */
   const enriched = appointments.map(apt => {
     const patient = db.prepare(`
       SELECT p.*, u.first_name, u.last_name, u.email, u.phone
@@ -98,7 +97,7 @@ router.get('/:id/appointments', authenticateToken, (req, res) => {
       patient_email: patient?.email,
       patient_phone: patient?.phone,
       patient_medical_history: patient?.medical_history,
-      patient_ssn: patient?.ssn /* BUG D2: SSN in doctor appointments response */
+      patient_ssn: patient?.ssn
     };
   });
 

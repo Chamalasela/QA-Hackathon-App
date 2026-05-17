@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api'
 
 export default function Register({ onLogin }) {
-  const [form, setForm] = useState({ email: '', password: '', first_name: '', last_name: '', phone: '', date_of_birth: '', gender: '', ssn: '', insurance_number: '' })
+  const [form, setForm] = useState({ email: '', password: '', first_name: '', last_name: '', phone: '', date_of_birth: '', gender: '', ssn: '', insurance_number: '', team_id: '' })
   const [error, setError] = useState('')
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
@@ -11,14 +11,16 @@ export default function Register({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    /* BUG U3: On error, all form fields are cleared because we reset state */
+    if (!form.team_id) {
+      setError('Please select your team')
+      return
+    }
     try {
-      const { token, user } = await api.register(form)
+      const { token, user } = await api.register({ ...form, team_id: Number(form.team_id) })
       onLogin(user, token)
     } catch (err) {
       setError(err.message)
-      /* BUG U3: Reset form on error — user loses all entered data */
-      setForm({ email: '', password: '', first_name: '', last_name: '', phone: '', date_of_birth: '', gender: '', ssn: '', insurance_number: '' })
+      setForm({ email: '', password: '', first_name: '', last_name: '', phone: '', date_of_birth: '', gender: '', ssn: '', insurance_number: '', team_id: '' })
     }
   }
 
@@ -29,6 +31,13 @@ export default function Register({ onLogin }) {
         <p className="subtitle">Create your MediCare Clinic account</p>
         {error && <div className="alert alert-error">{error}</div>}
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Team *</label>
+            <select name="team_id" value={form.team_id} onChange={handleChange} required>
+              <option value="">-- Select Team --</option>
+              {[1,2,3,4,5,6].map(t => <option key={t} value={t}>Team {t}</option>)}
+            </select>
+          </div>
           <div className="form-row">
             <div className="form-group">
               <label>First Name *</label>
@@ -42,7 +51,6 @@ export default function Register({ onLogin }) {
           <div className="form-row">
             <div className="form-group">
               <label>Email *</label>
-              {/* BUG F2: type="text" instead of type="email" — allows invalid emails */}
               <input type="text" name="email" value={form.email} onChange={handleChange} required />
             </div>
             <div className="form-group">
@@ -72,7 +80,6 @@ export default function Register({ onLogin }) {
             </div>
             <div className="form-group">
               <label>SSN</label>
-              {/* BUG D5: SSN will be sent as query param in patient search */}
               <input name="ssn" value={form.ssn} onChange={handleChange} placeholder="XXX-XX-XXXX" />
             </div>
           </div>

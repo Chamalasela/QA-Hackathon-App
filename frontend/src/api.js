@@ -13,7 +13,7 @@ async function request(path, options = {}) {
 
 export const api = {
   // Auth
-  login: (email, password) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  login: (email, password, team_id) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password, team_id }) }),
   register: (data) => request('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
   getProfile: () => request('/auth/profile'),
 

@@ -20,7 +20,6 @@ export default function Patients() {
 
   const handleSearch = (e) => {
     e.preventDefault()
-    /* BUG F3: Search is case-sensitive — server does exact match */
     loadPatients(search)
   }
 
@@ -28,9 +27,8 @@ export default function Patients() {
     if (!dob) return 'N/A'
     const birth = new Date(dob)
     const today = new Date()
-    /* BUG F8: Off-by-one age calculation — doesn't properly account for month/day */
     let age = today.getFullYear() - birth.getFullYear()
-    return age /* Missing: check if birthday has occurred this year */
+    return age
   }
 
   return (
@@ -59,7 +57,6 @@ export default function Patients() {
               <th>DOB</th>
               <th>Age</th>
               <th>Gender</th>
-              {/* BUG S3/D2: SSN shown in patient list — should not be visible */}
               <th>SSN</th>
               <th>Insurance</th>
               <th>Actions</th>
@@ -74,7 +71,6 @@ export default function Patients() {
                 <td>{p.date_of_birth}</td>
                 <td>{calculateAge(p.date_of_birth)}</td>
                 <td>{p.gender}</td>
-                {/* BUG S3/D2: Showing SSN in the list view */}
                 <td>{p.ssn}</td>
                 <td>{p.insurance_number}</td>
                 <td>

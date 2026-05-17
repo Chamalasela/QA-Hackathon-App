@@ -2,10 +2,9 @@ const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const { getDb, initDb } = require('./models/database');
 
-async function seed() {
-  await initDb();
-  const db = getDb();
-  console.log('Seeding MediCare Clinic database...');
+async function seedTeam(teamId) {
+  const db = getDb(teamId);
+  console.log(`\nSeeding Team ${teamId} database...`);
 
   // Clear existing data
   db.exec('DELETE FROM invoices;');
@@ -20,16 +19,16 @@ async function seed() {
   const adminId = uuidv4();
   const receptionistId = uuidv4();
 
-  db.prepare(`INSERT INTO users VALUES (?, ?, ?, 'admin', 'Sarah', 'Wilson', '555-0100', datetime('now'))`).run(adminId, 'admin@test.com', hash('Test@123'));
-  db.prepare(`INSERT INTO users VALUES (?, ?, ?, 'admin', 'Mike', 'Brown', '555-0101', datetime('now'))`).run(receptionistId, 'receptionist@test.com', hash('Test@123'));
+  db.prepare(`INSERT INTO users VALUES (?, ?, ?, 'admin', 'Sachini', 'Weerasinghe', '077-1000100', datetime('now'))`).run(adminId, 'admin@test.com', hash('Test@123'));
+  db.prepare(`INSERT INTO users VALUES (?, ?, ?, 'admin', 'Kavindu', 'Rathnayake', '077-1000101', datetime('now'))`).run(receptionistId, 'receptionist@test.com', hash('Test@123'));
 
   // --- DOCTORS (5) ---
   const doctorData = [
-    { first: 'James', last: 'Smith', email: 'doctor@test.com', phone: '555-0200', spec: 'General Medicine', license: 'LIC-001', fee: 100 },
-    { first: 'Emily', last: 'Johnson', email: 'emily.johnson@clinic.com', phone: '555-0201', spec: 'Pediatrics', license: 'LIC-002', fee: 120 },
-    { first: 'Robert', last: 'Williams', email: 'robert.williams@clinic.com', phone: '555-0202', spec: 'Dermatology', license: 'LIC-003', fee: 150 },
-    { first: 'Maria', last: 'Garcia', email: 'maria.garcia@clinic.com', phone: '555-0203', spec: 'Orthopedics', license: 'LIC-004', fee: 130 },
-    { first: 'David', last: 'Lee', email: 'david.lee@clinic.com', phone: '555-0204', spec: 'Cardiology', license: 'LIC-005', fee: 200 }
+    { first: 'Nuwan', last: 'Perera', email: 'doctor@test.com', phone: '077-2000200', spec: 'General Medicine', license: 'SLMC-001', fee: 100 },
+    { first: 'Tharushi', last: 'Fernando', email: 'tharushi.fernando@clinic.com', phone: '077-2000201', spec: 'Pediatrics', license: 'SLMC-002', fee: 120 },
+    { first: 'Kasun', last: 'Jayawardena', email: 'kasun.jayawardena@clinic.com', phone: '077-2000202', spec: 'Dermatology', license: 'SLMC-003', fee: 150 },
+    { first: 'Dilini', last: 'de Silva', email: 'dilini.desilva@clinic.com', phone: '077-2000203', spec: 'Orthopedics', license: 'SLMC-004', fee: 130 },
+    { first: 'Amila', last: 'Wickramasinghe', email: 'amila.wickramasinghe@clinic.com', phone: '077-2000204', spec: 'Cardiology', license: 'SLMC-005', fee: 200 }
   ];
 
   const doctorIds = [];
@@ -43,28 +42,26 @@ async function seed() {
 
   // --- PATIENTS (20) ---
   const patientData = [
-    { first: 'John', last: 'Doe', email: 'patient@test.com', phone: '555-0300', dob: '1990-05-15', gender: 'Male', ssn: '123-45-6789', ins: 'INS-001', history: 'Diabetes Type 2, Hypertension' },
-    { first: 'Jane', last: 'Smith', email: 'jane.smith@email.com', phone: '555-0301', dob: '1985-08-22', gender: 'Female', ssn: '234-56-7890', ins: 'INS-002', history: 'Asthma' },
-    { first: 'Michael', last: 'Johnson', email: 'michael.j@email.com', phone: '555-0302', dob: '1978-03-10', gender: 'Male', ssn: '345-67-8901', ins: 'INS-003', history: 'None' },
-    { first: 'Emily', last: 'Davis', email: 'emily.d@email.com', phone: '555-0303', dob: '1995-11-30', gender: 'Female', ssn: '456-78-9012', ins: 'INS-004', history: 'Allergies: Penicillin' },
-    { first: 'William', last: 'Brown', email: 'william.b@email.com', phone: '555-0304', dob: '1960-01-05', gender: 'Male', ssn: '567-89-0123', ins: 'INS-005', history: 'Heart Disease, High Cholesterol' },
-    { first: 'Olivia', last: 'Martinez', email: 'olivia.m@email.com', phone: '555-0305', dob: '2000-07-19', gender: 'Female', ssn: '678-90-1234', ins: 'INS-006', history: 'None' },
-    { first: 'James', last: 'Anderson', email: 'james.a@email.com', phone: '555-0306', dob: '1988-12-25', gender: 'Male', ssn: '789-01-2345', ins: 'INS-007', history: 'Migraine' },
-    { first: 'Sophia', last: 'Taylor', email: 'sophia.t@email.com', phone: '555-0307', dob: '1992-04-08', gender: 'Female', ssn: '890-12-3456', ins: 'INS-008', history: 'Eczema' },
-    { first: 'Benjamin', last: 'Thomas', email: 'benjamin.t@email.com', phone: '555-0308', dob: '1975-09-14', gender: 'Male', ssn: '901-23-4567', ins: 'INS-009', history: 'Arthritis' },
-    { first: 'Isabella', last: 'Jackson', email: 'isabella.j@email.com', phone: '555-0309', dob: '1998-06-02', gender: 'Female', ssn: '012-34-5678', ins: 'INS-010', history: 'None' },
-    { first: 'Alexander', last: 'White', email: 'alex.w@email.com', phone: '555-0310', dob: '1982-02-28', gender: 'Male', ssn: '111-22-3333', ins: 'INS-011', history: 'GERD' },
-    /* Patient born on Feb 29 for BUG F8: age calculation edge case */
-    { first: 'Charlotte', last: 'Harris', email: 'charlotte.h@email.com', phone: '555-0311', dob: '2000-02-29', gender: 'Female', ssn: '222-33-4444', ins: 'INS-012', history: 'None' },
-    { first: 'Daniel', last: 'Martin', email: 'daniel.m@email.com', phone: '555-0312', dob: '1970-10-31', gender: 'Male', ssn: '333-44-5555', ins: 'INS-013', history: 'COPD, Former Smoker' },
-    { first: 'Amelia', last: 'Thompson', email: 'amelia.t@email.com', phone: '555-0313', dob: '2005-05-17', gender: 'Female', ssn: '444-55-6666', ins: 'INS-014', history: 'Anxiety Disorder' },
-    /* Patient with today's birthday for BUG F8 testing */
-    { first: 'Henry', last: 'Robinson', email: 'henry.r@email.com', phone: '555-0314', dob: '1990-05-17', gender: 'Male', ssn: '555-66-7777', ins: 'INS-015', history: 'None' },
-    { first: 'Mia', last: 'Clark', email: 'mia.c@email.com', phone: '555-0315', dob: '1993-08-08', gender: 'Female', ssn: '666-77-8888', ins: 'INS-016', history: 'Hypothyroidism' },
-    { first: "Patrick", last: "O'Brien", email: 'patrick.ob@email.com', phone: '555-0316', dob: '1987-03-17', gender: 'Male', ssn: '777-88-9999', ins: 'INS-017', history: 'None' },
-    { first: 'Lily', last: 'Nguyen', email: 'lily.n@email.com', phone: '555-0317', dob: '1999-12-31', gender: 'Female', ssn: '888-99-0000', ins: 'INS-018', history: 'Lactose Intolerance' },
-    { first: 'Ethan', last: 'Kim', email: 'ethan.k@email.com', phone: '555-0318', dob: '2002-01-01', gender: 'Male', ssn: '999-00-1111', ins: 'INS-019', history: 'None' },
-    { first: 'Ava', last: 'Lopez', email: 'ava.l@email.com', phone: '555-0319', dob: '1996-06-15', gender: 'Female', ssn: '000-11-2222', ins: 'INS-020', history: 'Depression' }
+    { first: 'Tharindu', last: 'Bandara', email: 'patient@test.com', phone: '077-3000300', dob: '1990-05-15', gender: 'Male', ssn: '199005150234', ins: 'INS-001', history: 'Diabetes Type 2, Hypertension' },
+    { first: 'Nethmi', last: 'Samarawickrama', email: 'nethmi.s@email.com', phone: '077-3000301', dob: '1985-08-22', gender: 'Female', ssn: '198508220456', ins: 'INS-002', history: 'Asthma' },
+    { first: 'Chathura', last: 'Gunasekara', email: 'chathura.g@email.com', phone: '077-3000302', dob: '1978-03-10', gender: 'Male', ssn: '197803100678', ins: 'INS-003', history: 'None' },
+    { first: 'Sanduni', last: 'Dissanayake', email: 'sanduni.d@email.com', phone: '077-3000303', dob: '1995-11-30', gender: 'Female', ssn: '199511300890', ins: 'INS-004', history: 'Allergies: Penicillin' },
+    { first: 'Lakshan', last: 'Senanayake', email: 'lakshan.s@email.com', phone: '077-3000304', dob: '1960-01-05', gender: 'Male', ssn: '196001050112', ins: 'INS-005', history: 'Heart Disease, High Cholesterol' },
+    { first: 'Hiruni', last: 'Rajapaksha', email: 'hiruni.r@email.com', phone: '077-3000305', dob: '2000-07-19', gender: 'Female', ssn: '200007190334', ins: 'INS-006', history: 'None' },
+    { first: 'Dinesh', last: 'Kumara', email: 'dinesh.k@email.com', phone: '077-3000306', dob: '1988-12-25', gender: 'Male', ssn: '198812250556', ins: 'INS-007', history: 'Migraine' },
+    { first: 'Ishara', last: 'Wijesinghe', email: 'ishara.w@email.com', phone: '077-3000307', dob: '1992-04-08', gender: 'Female', ssn: '199204080778', ins: 'INS-008', history: 'Eczema' },
+    { first: 'Ruwan', last: 'Herath', email: 'ruwan.h@email.com', phone: '077-3000308', dob: '1975-09-14', gender: 'Male', ssn: '197509140990', ins: 'INS-009', history: 'Arthritis' },
+    { first: 'Kavisha', last: 'Abeysekara', email: 'kavisha.a@email.com', phone: '077-3000309', dob: '1998-06-02', gender: 'Female', ssn: '199806021212', ins: 'INS-010', history: 'None' },
+    { first: 'Supun', last: 'Liyanage', email: 'supun.l@email.com', phone: '077-3000310', dob: '1982-02-28', gender: 'Male', ssn: '198202281434', ins: 'INS-011', history: 'GERD' },
+    { first: 'Malsha', last: 'Karunaratne', email: 'malsha.k@email.com', phone: '077-3000311', dob: '2000-02-29', gender: 'Female', ssn: '200002291656', ins: 'INS-012', history: 'None' },
+    { first: 'Chaminda', last: 'Weerakoon', email: 'chaminda.w@email.com', phone: '077-3000312', dob: '1970-10-31', gender: 'Male', ssn: '197010311878', ins: 'INS-013', history: 'COPD, Former Smoker' },
+    { first: 'Piumika', last: 'Tennakoon', email: 'piumika.t@email.com', phone: '077-3000313', dob: '2005-05-17', gender: 'Female', ssn: '200505172090', ins: 'INS-014', history: 'Anxiety Disorder' },
+    { first: 'Asanka', last: 'Pathirana', email: 'asanka.p@email.com', phone: '077-3000314', dob: '1990-05-17', gender: 'Male', ssn: '199005172312', ins: 'INS-015', history: 'None' },
+    { first: 'Rashmi', last: 'Nanayakkara', email: 'rashmi.n@email.com', phone: '077-3000315', dob: '1993-08-08', gender: 'Female', ssn: '199308082534', ins: 'INS-016', history: 'Hypothyroidism' },
+    { first: 'Prasanna', last: 'Gunawardana', email: 'prasanna.g@email.com', phone: '077-3000316', dob: '1987-03-17', gender: 'Male', ssn: '198703172756', ins: 'INS-017', history: 'None' },
+    { first: 'Anusha', last: 'Ekanayake', email: 'anusha.e@email.com', phone: '077-3000317', dob: '1999-12-31', gender: 'Female', ssn: '199912312978', ins: 'INS-018', history: 'Lactose Intolerance' },
+    { first: 'Nadeesha', last: 'Ranasinghe', email: 'nadeesha.r@email.com', phone: '077-3000318', dob: '2002-01-01', gender: 'Male', ssn: '200201013190', ins: 'INS-019', history: 'None' },
+    { first: 'Hasini', last: 'Madushani', email: 'hasini.m@email.com', phone: '077-3000319', dob: '1996-06-15', gender: 'Female', ssn: '199606153412', ins: 'INS-020', history: 'Depression' }
   ];
 
   const patientIds = [];
@@ -159,16 +156,25 @@ async function seed() {
   }
 
   db.save();
-  console.log('Seed complete!');
+  console.log(`  Team ${teamId} seed complete!`);
   console.log(`  Users: ${db.prepare('SELECT COUNT(*) as c FROM users').get().c}`);
   console.log(`  Doctors: ${db.prepare('SELECT COUNT(*) as c FROM doctors').get().c}`);
   console.log(`  Patients: ${db.prepare('SELECT COUNT(*) as c FROM patients').get().c}`);
   console.log(`  Appointments: ${db.prepare('SELECT COUNT(*) as c FROM appointments').get().c}`);
   console.log(`  Invoices: ${db.prepare('SELECT COUNT(*) as c FROM invoices').get().c}`);
+}
+
+async function seed() {
+  await initDb();
+  for (let t = 1; t <= 6; t++) {
+    await seedTeam(t);
+  }
+  console.log('\n✅ All 6 team databases seeded!');
   console.log('\nLogin Credentials (all passwords: Test@123):');
   console.log('  Admin:   admin@test.com');
   console.log('  Doctor:  doctor@test.com');
   console.log('  Patient: patient@test.com');
+  console.log('\nSelect Team 1-6 on the login page.');
 }
 
 seed().catch(err => { console.error('Seed failed:', err); process.exit(1); });

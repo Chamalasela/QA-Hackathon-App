@@ -25,20 +25,17 @@ const router = express.Router();
  *       200: { description: List of patients }
  */
 router.get('/', authenticateToken, (req, res) => {
-  const db = getDb();
+  const db = getDb(req.user.teamId);
   const { search, ssn } = req.query;
-  /* BUG D5: sensitive data (ssn) passed as URL query parameter — appears in logs/history */
 
   let query = `
     SELECT p.*, u.email, u.first_name, u.last_name, u.phone
     FROM patients p
     JOIN users u ON p.user_id = u.id
   `;
-  /* BUG D4: No filter for is_deleted — soft-deleted records still returned */
   const params = [];
 
   if (search) {
-    /* BUG F3: Case-sensitive search — uses = instead of LIKE with COLLATE NOCASE */
     query += ` WHERE (u.first_name = ? OR u.last_name = ?)`;
     params.push(search, search);
   }
@@ -50,9 +47,6 @@ router.get('/', authenticateToken, (req, res) => {
 
   const patients = db.prepare(query).all(...params);
 
-  /* BUG S3: Returns ALL patient data including SSN, insurance, medical history in list endpoint
-     Should only return name, ID, DOB for list view */
-  /* BUG D1: No role-based filtering — admin/receptionist can see medical_history */
   res.json(patients);
 });
 
@@ -73,24 +67,19 @@ router.get('/', authenticateToken, (req, res) => {
  *       404: { description: Patient not found }
  */
 router.get('/:id', authenticateToken, (req, res) => {
-  const db = getDb();
+  const db = getDb(req.user.teamId);
 
-  /* BUG S1: No authorization check — any authenticated user can view any patient's full record
-     Should check: is this the patient themselves, or their assigned doctor? */
   const patient = db.prepare(`
     SELECT p.*, u.email, u.first_name, u.last_name, u.phone
     FROM patients p
     JOIN users u ON p.user_id = u.id
     WHERE p.id = ?
   `).get(req.params.id);
-  /* BUG D4: No is_deleted check — deleted patients still accessible via direct API */
 
   if (!patient) {
     return res.status(404).json({ error: 'Something went wrong' });
   }
 
-  /* BUG S3 + D2: Returns SSN, insurance, medical_history even when not needed */
-  /* BUG D1: Admin/receptionist can see medical_history — should be doctor-only */
   res.json(patient);
 });
 
@@ -123,10 +112,9 @@ router.get('/:id', authenticateToken, (req, res) => {
  *       200: { description: Patient updated }
  */
 router.put('/:id', authenticateToken, (req, res) => {
-  const db = getDb();
+  const db = getDb(req.user.teamId);
   const { date_of_birth, gender, address, ssn, insurance_number, medical_history, emergency_contact } = req.body;
 
-  /* BUG S1: No authorization — any user can update any patient */
   const patient = db.prepare('SELECT * FROM patients WHERE id = ?').get(req.params.id);
   if (!patient) {
     return res.status(404).json({ error: 'Something went wrong' });
@@ -169,8 +157,7 @@ router.put('/:id', authenticateToken, (req, res) => {
  *       200: { description: Patient deleted }
  */
 router.delete('/:id', authenticateToken, authorizeRoles('admin'), (req, res) => {
-  const db = getDb();
-  /* Soft delete — but BUG D4: GET endpoints don't filter by is_deleted */
+  const db = getDb(req.user.teamId);
   db.prepare('UPDATE patients SET is_deleted = 1 WHERE id = ?').run(req.params.id);
   res.json({ message: 'Patient deleted' });
 });

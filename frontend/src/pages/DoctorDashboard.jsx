@@ -11,14 +11,12 @@ export default function DoctorDashboard({ user }) {
 
   useEffect(() => {
     if (user.doctorId) {
-      /* BUG P2: This endpoint has N+1 query problem — each appointment triggers separate patient query */
       api.getDoctorAppointments(user.doctorId, selectedDate).then(setAppointments).catch(e => setError(e.message))
     }
   }, [user.doctorId, selectedDate])
 
   const handleComplete = async (id) => {
     try {
-      /* BUG S2: notes/prescription not sanitized — stored XSS */
       await api.completeAppointment(id, { notes, prescription })
       setNotesModal(null)
       setNotes('')
@@ -59,8 +57,6 @@ export default function DoctorDashboard({ user }) {
               <th>Patient</th>
               <th>Email</th>
               <th>Phone</th>
-              {/* BUG D1: Medical history visible in doctor dashboard (but this is intended for doctors) */}
-              {/* BUG D2: However, SSN should NOT be shown here */}
               <th>Medical History</th>
               <th>Status</th>
               <th>Notes</th>
@@ -74,7 +70,6 @@ export default function DoctorDashboard({ user }) {
                 <td>{a.patient_name}</td>
                 <td>{a.patient_email}</td>
                 <td>{a.patient_phone}</td>
-                {/* BUG S2: Renders HTML from medical_history — stored XSS vector */}
                 <td><span dangerouslySetInnerHTML={{ __html: a.patient_medical_history }} /></td>
                 <td><span className={`badge badge-${a.status}`}>{a.status}</span></td>
                 <td>{a.notes || '—'}</td>
@@ -101,7 +96,6 @@ export default function DoctorDashboard({ user }) {
             <h2>Complete Appointment</h2>
             <div className="form-group">
               <label>Notes</label>
-              {/* BUG S2: No sanitization on input — allows HTML/script injection */}
               <textarea rows="3" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Enter consultation notes..." />
             </div>
             <div className="form-group">

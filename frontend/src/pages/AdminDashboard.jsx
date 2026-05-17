@@ -41,7 +41,6 @@ export default function AdminDashboard() {
           <div className="stat-value">{cancelled}</div>
           <div className="stat-label">Cancelled</div>
         </div>
-        {/* BUG F9: Total count is wrong from API */}
         <div className="stat-card">
           <div className="stat-value">{appointments.total}</div>
           <div className="stat-label">Total (API count)</div>
@@ -77,7 +76,6 @@ export default function AdminDashboard() {
       <div className="card">
         <h2>Recent Appointments</h2>
         {error && <div className="alert alert-error">{error}</div>}
-        {/* BUG P1: ALL appointments loaded at once — no pagination */}
         <table>
           <thead>
             <tr>

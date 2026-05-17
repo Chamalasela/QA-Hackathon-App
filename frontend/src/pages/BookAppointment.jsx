@@ -23,7 +23,6 @@ export default function BookAppointment({ user }) {
 
   useEffect(() => {
     if (selectedDoctor && selectedDate) {
-      /* BUG P3: Every date change triggers a fresh API call — no caching */
       api.getAvailability(selectedDoctor, selectedDate).then(data => {
         setSlots(data.available_slots || [])
         setSelectedSlot('')
@@ -35,7 +34,6 @@ export default function BookAppointment({ user }) {
     e.preventDefault()
     setError('')
     setSuccess('')
-    /* BUG U1: No loading indicator — user can click multiple times */
 
     try {
       await api.bookAppointment({
@@ -44,7 +42,6 @@ export default function BookAppointment({ user }) {
         appointment_date: selectedDate,
         time_slot: selectedSlot
       })
-      /* BUG F1: No client-side check for past dates — relies on server (which also doesn't check) */
       setSuccess('Appointment booked successfully!')
       setTimeout(() => navigate('/appointments'), 1500)
     } catch (err) {
@@ -80,8 +77,6 @@ export default function BookAppointment({ user }) {
         </div>
         <div className="form-group">
           <label>Date *</label>
-          {/* BUG F1: type="date" has no min attribute — allows selecting past dates */}
-          {/* BUG U5: No weekend restriction — allows selecting Sat/Sun */}
           <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} required />
         </div>
         {slots.length > 0 && (
@@ -107,7 +102,6 @@ export default function BookAppointment({ user }) {
         <button type="submit" className="btn btn-primary" disabled={!selectedSlot} style={{ marginTop: 16 }}>
           Book Appointment
         </button>
-        {/* BUG U1: No loading spinner — button stays the same during submission */}
       </form>
     </div>
   )

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluation Guide — MediCare QA Hackathon</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;color:#1e293b;background:#f8fafc;line-height:1.7;padding:32px}
+  .container{max-width:850px;margin:0 auto}
+  h1{font-size:1.8rem;margin-bottom:4px;color:#0c4a6e}
+  .subtitle{color:#64748b;margin-bottom:32px}
+  h2{font-size:1.3rem;color:#0369a1;margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid #0ea5e9}
+  h3{font-size:1.05rem;color:#1e293b;margin:16px 0 8px}
+  p,li{margin-bottom:8px}
+  ul,ol{padding-left:24px;margin-bottom:16px}
+  code{background:#e2e8f0;padding:2px 6px;border-radius:4px;font-size:0.9em}
+  pre{background:#1e293b;color:#e2e8f0;padding:16px 20px;border-radius:8px;overflow-x:auto;margin:12px 0;font-size:0.9rem;line-height:1.5}
+  .step-box{background:#f0f9ff;border-left:4px solid #0ea5e9;padding:16px 20px;margin:16px 0;border-radius:0 8px 8px 0}
+  .warn-box{background:#fef2f2;border-left:4px solid #dc2626;padding:16px 20px;margin:16px 0;border-radius:0 8px 8px 0}
+  .folder-tree{background:#f8fafc;border:1px solid #e2e8f0;padding:16px 20px;border-radius:8px;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.85rem;line-height:1.8;white-space:pre}
+  table{width:100%;border-collapse:collapse;margin:12px 0}
+  th{background:#0c4a6e;color:#fff;padding:8px 12px;text-align:left;font-size:0.85rem}
+  td{padding:8px 12px;border-bottom:1px solid #e2e8f0;font-size:0.9rem}
+  tr:nth-child(even){background:#f8fafc}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>📊 Evaluation Guide</h1>
+<p class="subtitle">Step-by-step instructions for collecting team submissions and running automated evaluation</p>
+
+<!-- STEP 1 -->
+<h2>Step 1: Collect Team Submissions</h2>
+<p>At the end of the hackathon (90 minutes), each team submits their deliverables. They can either:</p>
+<ul>
+  <li><strong>Option A:</strong> Drop files directly into their team folder on the shared drive/USB</li>
+  <li><strong>Option B:</strong> Email/upload a ZIP file which the organizer extracts into the team folder</li>
+</ul>
+
+<h3>Expected Folder Structure</h3>
+<div class="folder-tree">submissions/
+├── team-1/
+│   ├── bug-report.csv          ← Bug report (required)
+│   ├── test-cases.csv          ← Test cases (required)
+│   └── automation/             ← Automation scripts folder (required)
+│       ├── test_login.py       ← (or .js/.ts files)
+│       ├── test_patients.py
+│       └── ...
+├── team-2/
+│   ├── bug-report.csv
+│   ├── test-cases.csv
+│   └── automation/
+├── team-3/ ...
+├── team-4/ ...
+├── team-5/ ...
+└── team-6/ ...</div>
+
+<h3>Required File Names</h3>
+<table>
+  <tr><th>Deliverable</th><th>Expected Name</th><th>Format</th></tr>
+  <tr><td>Bug Report</td><td><code>bug-report.csv</code></td><td>CSV with headers matching the template</td></tr>
+  <tr><td>Test Cases</td><td><code>test-cases.csv</code></td><td>CSV with headers matching the template</td></tr>
+  <tr><td>Automation Scripts</td><td><code>automation/</code> folder</td><td>Any .py, .js, or .ts files inside</td></tr>
+  <tr><td>Presentation</td><td><code>presentation.pptx</code> (optional for eval)</td><td>PowerPoint (judged live, not auto-scored)</td></tr>
+</table>
+
+<div class="warn-box">
+  <strong>⚠️ Important:</strong> File names must be exact: <code>bug-report.csv</code> and <code>test-cases.csv</code> (lowercase, with hyphens). The evaluation scripts look for these specific names. If a team uses different names, rename them before running evaluation.
+</div>
+
+<!-- STEP 2 -->
+<h2>Step 2: Verify Submissions</h2>
+<p>Before running evaluation, quickly verify each team's submission:</p>
+<ul>
+  <li>✅ <code>bug-report.csv</code> exists and has the expected column headers</li>
+  <li>✅ <code>test-cases.csv</code> exists and has the expected column headers</li>
+  <li>✅ <code>automation/</code> folder exists and contains at least one script file</li>
+  <li>✅ CSV files are not empty (have data rows beyond the header)</li>
+</ul>
+
+<h3>Expected CSV Headers</h3>
+<p><strong>bug-report.csv:</strong></p>
+<pre>Bug_ID,Title,Module,Category,Severity,Steps_To_Reproduce,Expected_Result,Actual_Result,Screenshot_Path,Tool_Used</pre>
+
+<p><strong>test-cases.csv:</strong></p>
+<pre>TC_ID,Module,Title,Category,Priority,Preconditions,Steps,Expected_Result,Test_Data,Tool_Used</pre>
+
+<!-- STEP 3 -->
+<h2>Step 3: Run Automated Evaluation</h2>
+<p>The evaluation scripts are in the <code>evaluation/</code> folder. You need Python 3.8+ installed.</p>
+
+<h3>Option A: One-Click (Recommended)</h3>
+<div class="step-box">
+  <strong>Double-click</strong> <code>run-evaluation.bat</code> in the project root folder.<br>
+  This will run all evaluations for all teams and generate the scoreboard automatically.
+</div>
+
+<h3>Option B: Manual Commands</h3>
+<pre>cd evaluation
+
+:: Evaluate bug reports (all teams)
+python evaluate-bugs.py --all
+
+:: Evaluate test cases (all teams)
+python evaluate-testcases.py --all
+
+:: Evaluate automation scripts (all teams)
+python evaluate-automation.py --all
+
+:: Generate final scoreboard (after manual scores are added)
+python generate-scoreboard.py</pre>
+
+<h3>Evaluate a Single Team</h3>
+<pre>python evaluate-bugs.py --team 3
+python evaluate-testcases.py --team 3
+python evaluate-automation.py --team 3</pre>
+
+<!-- STEP 4 -->
+<h2>Step 4: Manual Scoring (Demo &amp; AI Usage)</h2>
+<p>The automated scripts handle Bugs (300), Test Cases (250), and Automation (200). The remaining categories are scored by judges:</p>
+
+<table>
+  <tr><th>Category</th><th>Max Points</th><th>How to Score</th></tr>
+  <tr><td>Demo & Strategy</td><td>150</td><td>Judge fills out <code>judge-scorecard.html</code> during team presentations</td></tr>
+  <tr><td>AI Tool Usage</td><td>100</td><td>Judge evaluates AI usage claims during demo Q&A</td></tr>
+  <tr><td>Bonus</td><td>50</td><td>Judge awards for exceptional work</td></tr>
+</table>
+
+<h3>Saving Manual Scores</h3>
+<ol>
+  <li>Open <code>materials/judge-scorecard.html</code> in a browser</li>
+  <li>Select the team from the dropdown</li>
+  <li>Fill in scores for each criterion</li>
+  <li>Click <strong>"Export as JSON"</strong></li>
+  <li>Save the downloaded file (<code>team-N-manual.json</code>) into the <code>judging/</code> folder</li>
+</ol>
+
+<!-- STEP 5 -->
+<h2>Step 5: Generate Final Scoreboard</h2>
+<p>After all automated evaluations AND manual judge scores are in the <code>judging/</code> folder:</p>
+
+<pre>python evaluation/generate-scoreboard.py</pre>
+
+<p>This produces:</p>
+<ul>
+  <li><code>judging/final-scoreboard.json</code> — Machine-readable results</li>
+  <li><code>judging/scoreboard.html</code> — Beautiful HTML scoreboard to display on screen</li>
+  <li>Console output with rankings</li>
+</ul>
+
+<div class="step-box">
+  <strong>💡 Tip:</strong> Open <code>judging/scoreboard.html</code> in a browser and project it on screen for the awards ceremony!
+</div>
+
+<!-- STEP 6 -->
+<h2>Step 6: Output Files</h2>
+<p>After running evaluation, the <code>judging/</code> folder will contain:</p>
+
+<div class="folder-tree">judging/
+├── team-1-bugs.json         ← Detailed bug evaluation (auto)
+├── team-1-testcases.json    ← Detailed test case evaluation (auto)
+├── team-1-automation.json   ← Detailed automation evaluation (auto)
+├── team-1-manual.json       ← Judge's manual scores (from scorecard)
+├── team-2-bugs.json
+├── team-2-testcases.json
+├── ... (repeat for all teams)
+├── bugs-summary.json        ← All teams' bug scores
+├── testcases-summary.json   ← All teams' test case scores
+├── final-scoreboard.json    ← Final combined scoreboard
+└── scoreboard.html          ← Display-ready HTML scoreboard</div>
+
+<!-- TROUBLESHOOTING -->
+<h2>Troubleshooting</h2>
+<table>
+  <tr><th>Issue</th><th>Solution</th></tr>
+  <tr><td>"python is not recognized"</td><td>Install Python 3.8+ from python.org, ensure it's in PATH</td></tr>
+  <tr><td>"Bug report not found"</td><td>Check file is named exactly <code>bug-report.csv</code> (not .xlsx)</td></tr>
+  <tr><td>"No automation files found"</td><td>Ensure scripts are in <code>automation/</code> subfolder</td></tr>
+  <tr><td>Team scores all zeros</td><td>Check CSV has correct column headers (case-sensitive)</td></tr>
+  <tr><td>Scoreboard missing manual scores</td><td>Ensure <code>team-N-manual.json</code> files are in <code>judging/</code></td></tr>
+</table>
+
+</div>
+</body>
+</html>

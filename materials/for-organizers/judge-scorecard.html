@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Judge Scorecard — MediCare QA Hackathon</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;padding:24px}
+.page{max-width:800px;margin:0 auto;background:#fff;padding:40px;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+h1{font-size:1.6rem;margin-bottom:4px}
+.subtitle{color:#64748b;margin-bottom:24px}
+.section{margin-bottom:28px;border:1px solid #e2e8f0;border-radius:8px;padding:20px}
+.section h2{font-size:1.1rem;color:#0f172a;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #3b82f6}
+table{width:100%;border-collapse:collapse;margin-bottom:12px}
+th{text-align:left;padding:8px 12px;background:#f8fafc;font-size:.85rem;color:#64748b;border-bottom:1px solid #e2e8f0}
+td{padding:8px 12px;border-bottom:1px solid #f1f5f9}
+td:last-child{width:80px;text-align:center}
+input[type="number"]{width:60px;padding:6px;border:1px solid #cbd5e1;border-radius:4px;text-align:center;font-size:1rem}
+.total-row td{font-weight:700;border-top:2px solid #1e293b;background:#f8fafc}
+.notes{width:100%;min-height:60px;padding:8px;border:1px solid #cbd5e1;border-radius:4px;font-family:inherit;resize:vertical}
+.print-btn{background:#3b82f6;color:#fff;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-size:1rem;margin-top:16px}
+.print-btn:hover{background:#2563eb}
+.header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.team-select{font-size:1.1rem;padding:8px 16px;border:1px solid #cbd5e1;border-radius:6px}
+@media print{.print-btn{display:none}.page{box-shadow:none;padding:20px}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header-row">
+    <div>
+      <h1>🏥 Judge Scorecard</h1>
+      <p class="subtitle">MediCare Clinic QA Hackathon</p>
+    </div>
+    <div>
+      <label>Team: </label>
+      <select class="team-select" id="teamSelect">
+        <option>Team 1</option><option>Team 2</option><option>Team 3</option>
+        <option>Team 4</option><option>Team 5</option><option>Team 6</option>
+      </select>
+    </div>
+  </div>
+  <p style="margin-bottom:4px"><strong>Judge Name:</strong> <input type="text" id="judgeName" style="padding:6px;border:1px solid #cbd5e1;border-radius:4px;width:200px"></p>
+  <p style="margin-bottom:20px"><strong>Date:</strong> <span id="dateField"></span></p>
+
+  <!-- DEMO & STRATEGY (150 pts) -->
+  <div class="section">
+    <h2>Demo & Strategy Presentation (150 pts)</h2>
+    <table>
+      <thead><tr><th>Criterion</th><th>Max</th><th>Score</th></tr></thead>
+      <tbody>
+        <tr><td>Clarity of presentation & communication</td><td>30</td><td><input type="number" min="0" max="30" class="demo-score" value="0"></td></tr>
+        <tr><td>Bug prioritization & risk assessment</td><td>30</td><td><input type="number" min="0" max="30" class="demo-score" value="0"></td></tr>
+        <tr><td>Testing strategy & methodology explanation</td><td>25</td><td><input type="number" min="0" max="25" class="demo-score" value="0"></td></tr>
+        <tr><td>Live demo of automation scripts</td><td>25</td><td><input type="number" min="0" max="25" class="demo-score" value="0"></td></tr>
+        <tr><td>Teamwork & collaboration evidence</td><td>20</td><td><input type="number" min="0" max="20" class="demo-score" value="0"></td></tr>
+        <tr><td>Handling judge Q&A</td><td>20</td><td><input type="number" min="0" max="20" class="demo-score" value="0"></td></tr>
+        <tr class="total-row"><td>Subtotal</td><td>150</td><td><span id="demoTotal">0</span></td></tr>
+      </tbody>
+    </table>
+    <label><strong>Notes:</strong></label>
+    <textarea class="notes" id="demoNotes" placeholder="Comments on team's presentation..."></textarea>
+  </div>
+
+  <!-- AI TOOL USAGE (100 pts) -->
+  <div class="section">
+    <h2>AI Tool Usage (100 pts)</h2>
+    <table>
+      <thead><tr><th>Criterion</th><th>Max</th><th>Score</th></tr></thead>
+      <tbody>
+        <tr><td>Effective use of AI for bug discovery</td><td>25</td><td><input type="number" min="0" max="25" class="ai-score" value="0"></td></tr>
+        <tr><td>AI-assisted test case generation quality</td><td>25</td><td><input type="number" min="0" max="25" class="ai-score" value="0"></td></tr>
+        <tr><td>AI-assisted automation code generation</td><td>20</td><td><input type="number" min="0" max="20" class="ai-score" value="0"></td></tr>
+        <tr><td>Creative / innovative AI tool application</td><td>15</td><td><input type="number" min="0" max="15" class="ai-score" value="0"></td></tr>
+        <tr><td>Documentation of AI prompts & workflow</td><td>15</td><td><input type="number" min="0" max="15" class="ai-score" value="0"></td></tr>
+        <tr class="total-row"><td>Subtotal</td><td>100</td><td><span id="aiTotal">0</span></td></tr>
+      </tbody>
+    </table>
+    <label><strong>Notes:</strong></label>
+    <textarea class="notes" id="aiNotes" placeholder="Comments on AI tool usage..."></textarea>
+  </div>
+
+  <!-- BONUS (50 pts) -->
+  <div class="section">
+    <h2>Bonus Points (up to 50)</h2>
+    <table>
+      <thead><tr><th>Criterion</th><th>Max</th><th>Score</th></tr></thead>
+      <tbody>
+        <tr><td>Found critical bug not in master list</td><td>15</td><td><input type="number" min="0" max="15" class="bonus-score" value="0"></td></tr>
+        <tr><td>Exceptional automation coverage</td><td>15</td><td><input type="number" min="0" max="15" class="bonus-score" value="0"></td></tr>
+        <tr><td>Outstanding presentation / creativity</td><td>10</td><td><input type="number" min="0" max="10" class="bonus-score" value="0"></td></tr>
+        <tr><td>Best team collaboration</td><td>10</td><td><input type="number" min="0" max="10" class="bonus-score" value="0"></td></tr>
+        <tr class="total-row"><td>Subtotal</td><td>50</td><td><span id="bonusTotal">0</span></td></tr>
+      </tbody>
+    </table>
+    <label><strong>Notes:</strong></label>
+    <textarea class="notes" id="bonusNotes" placeholder="Bonus justification..."></textarea>
+  </div>
+
+  <div class="section" style="background:#f0f9ff;border-color:#3b82f6">
+    <h2 style="border-color:#3b82f6">Grand Total (Manual Categories)</h2>
+    <table>
+      <tr><td>Demo & Strategy</td><td style="text-align:right"><span id="finalDemo">0</span> / 150</td></tr>
+      <tr><td>AI Tool Usage</td><td style="text-align:right"><span id="finalAi">0</span> / 100</td></tr>
+      <tr><td>Bonus</td><td style="text-align:right"><span id="finalBonus">0</span> / 50</td></tr>
+      <tr class="total-row"><td>TOTAL</td><td style="text-align:right;font-size:1.2rem"><span id="grandTotal">0</span> / 300</td></tr>
+    </table>
+  </div>
+
+  <button class="print-btn" onclick="exportJSON()">💾 Export as JSON</button>
+  <button class="print-btn" onclick="window.print()">🖨️ Print Scorecard</button>
+</div>
+
+<script>
+document.getElementById('dateField').textContent = new Date().toLocaleDateString();
+
+function calcTotals() {
+  let demo = 0, ai = 0, bonus = 0;
+  document.querySelectorAll('.demo-score').forEach(el => demo += +el.value || 0);
+  document.querySelectorAll('.ai-score').forEach(el => ai += +el.value || 0);
+  document.querySelectorAll('.bonus-score').forEach(el => bonus += +el.value || 0);
+  document.getElementById('demoTotal').textContent = demo;
+  document.getElementById('aiTotal').textContent = ai;
+  document.getElementById('bonusTotal').textContent = bonus;
+  document.getElementById('finalDemo').textContent = demo;
+  document.getElementById('finalAi').textContent = ai;
+  document.getElementById('finalBonus').textContent = bonus;
+  document.getElementById('grandTotal').textContent = demo + ai + bonus;
+}
+
+document.querySelectorAll('input[type="number"]').forEach(el => el.addEventListener('input', calcTotals));
+
+function exportJSON() {
+  const team = document.getElementById('teamSelect').value;
+  const teamNum = team.replace('Team ', '');
+  const data = {
+    team: +teamNum,
+    judge: document.getElementById('judgeName').value,
+    demo_strategy: +document.getElementById('demoTotal').textContent,
+    ai_tool_usage: +document.getElementById('aiTotal').textContent,
+    bonus: +document.getElementById('bonusTotal').textContent,
+    demo_notes: document.getElementById('demoNotes').value,
+    ai_notes: document.getElementById('aiNotes').value,
+    bonus_notes: document.getElementById('bonusNotes').value,
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `team-${teamNum}-manual.json`;
+  a.click();
+}
+</script>
+</body>
+</html>

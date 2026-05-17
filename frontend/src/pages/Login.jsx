@@ -5,16 +5,21 @@ import { api } from '../api'
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [teamId, setTeamId] = useState('')
   const [error, setError] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    if (!teamId) {
+      setError('Please select your team')
+      return
+    }
     try {
-      const { token, user } = await api.login(email, password)
+      const { token, user } = await api.login(email, password, Number(teamId))
       onLogin(user, token)
     } catch (err) {
-      setError(err.message) /* BUG U2: shows generic "Something went wrong" */
+      setError(err.message)
     }
   }
 
@@ -25,6 +30,13 @@ export default function Login({ onLogin }) {
         <p className="subtitle">Sign in to your account</p>
         {error && <div className="alert alert-error">{error}</div>}
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Team</label>
+            <select value={teamId} onChange={e => setTeamId(e.target.value)}>
+              <option value="">-- Select Team --</option>
+              {[1,2,3,4,5,6].map(t => <option key={t} value={t}>Team {t}</option>)}
+            </select>
+          </div>
           <div className="form-group">
             <label>Email</label>
             <input type="text" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter email" />

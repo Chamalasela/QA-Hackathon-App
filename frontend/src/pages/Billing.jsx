@@ -24,7 +24,6 @@ export default function Billing({ user }) {
     e.preventDefault()
     setError('')
     try {
-      /* BUG F7: No validation on discount_percentage — server accepts any value */
       await api.createInvoice({
         appointment_id: form.appointment_id,
         patient_id: form.patient_id,
@@ -98,7 +97,6 @@ export default function Billing({ user }) {
               </div>
               <div className="form-group">
                 <label>Discount %</label>
-                {/* BUG F7: No min/max validation — accepts negative and >100 */}
                 <input type="number" value={form.discount_percentage} onChange={e => setForm({...form, discount_percentage: e.target.value})} />
               </div>
             </div>

@@ -23,7 +23,7 @@ const router = express.Router();
  *       200: { description: List of invoices }
  */
 router.get('/', authenticateToken, (req, res) => {
-  const db = getDb();
+  const db = getDb(req.user.teamId);
   const { patient_id, status } = req.query;
 
   let query = `
@@ -81,10 +81,9 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'doctor'), (req, res
     return res.status(400).json({ error: 'Something went wrong' });
   }
 
-  /* BUG F7: No validation on discount_percentage — accepts negative and >100 values */
   const total = amount * (1 - discount_percentage / 100);
 
-  const db = getDb();
+  const db = getDb(req.user.teamId);
   const id = uuidv4();
 
   db.prepare(`
@@ -112,7 +111,7 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'doctor'), (req, res
  *       200: { description: Invoice details }
  */
 router.get('/:id', authenticateToken, (req, res) => {
-  const db = getDb();
+  const db = getDb(req.user.teamId);
   const invoice = db.prepare('SELECT * FROM invoices WHERE id = ?').get(req.params.id);
   if (!invoice) {
     return res.status(404).json({ error: 'Something went wrong' });
@@ -136,7 +135,7 @@ router.get('/:id', authenticateToken, (req, res) => {
  *       200: { description: Invoice paid }
  */
 router.put('/:id/pay', authenticateToken, (req, res) => {
-  const db = getDb();
+  const db = getDb(req.user.teamId);
   db.prepare("UPDATE invoices SET status = 'paid' WHERE id = ?").run(req.params.id);
   const invoice = db.prepare('SELECT * FROM invoices WHERE id = ?').get(req.params.id);
   res.json(invoice);

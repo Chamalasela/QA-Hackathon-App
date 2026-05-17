@@ -11,7 +11,6 @@ export default function PatientDetail({ user }) {
   const [form, setForm] = useState({})
 
   useEffect(() => {
-    /* BUG S1: No client-side check — any user can navigate to any patient ID */
     api.getPatient(id).then(p => { setPatient(p); setForm(p) }).catch(e => setError(e.message))
   }, [id])
 
@@ -26,7 +25,6 @@ export default function PatientDetail({ user }) {
   }
 
   const handleDelete = async () => {
-    /* BUG U4: No confirmation dialog — deletes immediately */
     try {
       await api.deletePatient(id)
       navigate('/patients')
@@ -82,7 +80,6 @@ export default function PatientDetail({ user }) {
             </div>
             <div className="form-group">
               <label>Medical History</label>
-              {/* BUG S2: No input sanitization — XSS possible through this field */}
               <textarea rows="3" value={form.medical_history || ''} onChange={e => setForm({...form, medical_history: e.target.value})} />
             </div>
             <div className="form-group">
@@ -103,12 +100,9 @@ export default function PatientDetail({ user }) {
                 <tr><td><strong>Date of Birth</strong></td><td>{patient.date_of_birth}</td></tr>
                 <tr><td><strong>Gender</strong></td><td>{patient.gender}</td></tr>
                 <tr><td><strong>Address</strong></td><td>{patient.address}</td></tr>
-                {/* BUG D2/S3: SSN visible to all roles */}
                 <tr><td><strong>SSN</strong></td><td>{patient.ssn}</td></tr>
                 <tr><td><strong>Insurance #</strong></td><td>{patient.insurance_number}</td></tr>
-                {/* BUG D1: Medical history visible to admin/receptionist — should be doctor-only */}
                 <tr><td><strong>Medical History</strong></td><td><span dangerouslySetInnerHTML={{ __html: patient.medical_history }} /></td></tr>
-                {/* BUG S2: dangerouslySetInnerHTML renders stored XSS */}
                 <tr><td><strong>Emergency Contact</strong></td><td>{patient.emergency_contact}</td></tr>
               </tbody>
             </table>

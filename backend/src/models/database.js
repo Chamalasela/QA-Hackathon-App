@@ -2,9 +2,16 @@
 const fs = require('fs');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, '..', '..', 'data', 'clinic.db');
-let db = null;
-let ready = false;
+const DATA_DIR = path.join(__dirname, '..', '..', 'data');
+const VALID_TEAMS = [1, 2, 3, 4, 5, 6];
+
+// Cache of DB instances per team
+const dbs = {};
+let SQL = null;
+
+function getDbPath(teamId) {
+  return path.join(DATA_DIR, `clinic-team-${teamId}.db`);
+}
 
 class DbWrapper {
   constructor(sqlDb) {
@@ -51,30 +58,42 @@ class DbWrapper {
   save() {
     const data = this._db.export();
     const buffer = Buffer.from(data);
-    fs.writeFileSync(DB_PATH, buffer);
+    fs.writeFileSync(this._path, buffer);
   }
 }
 
-async function initDb() {
-  if (ready) return;
-  const dataDir = path.dirname(DB_PATH);
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+async function initDb(teamId) {
+  if (!SQL) {
+    SQL = await initSqlJs();
   }
-  const SQL = await initSqlJs();
-  if (fs.existsSync(DB_PATH)) {
-    const fileBuffer = fs.readFileSync(DB_PATH);
-    db = new DbWrapper(new SQL.Database(fileBuffer));
-  } else {
-    db = new DbWrapper(new SQL.Database());
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
   }
-  initSchema(db);
-  db.save();
-  ready = true;
+
+  const teams = teamId ? [teamId] : VALID_TEAMS;
+  for (const t of teams) {
+    if (dbs[t]) continue;
+    const dbPath = getDbPath(t);
+    let wrapper;
+    if (fs.existsSync(dbPath)) {
+      const fileBuffer = fs.readFileSync(dbPath);
+      wrapper = new DbWrapper(new SQL.Database(fileBuffer));
+    } else {
+      wrapper = new DbWrapper(new SQL.Database());
+    }
+    wrapper._path = dbPath;
+    initSchema(wrapper);
+    wrapper.save();
+    dbs[t] = wrapper;
+  }
 }
 
-function getDb() {
-  if (!db) throw new Error('Database not initialized. Call initDb() first.');
+function getDb(teamId) {
+  if (!teamId || !VALID_TEAMS.includes(Number(teamId))) {
+    throw new Error('Invalid team ID. Must be 1-6.');
+  }
+  const db = dbs[Number(teamId)];
+  if (!db) throw new Error(`Database for team ${teamId} not initialized. Call initDb() first.`);
   return db;
 }
 

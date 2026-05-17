@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediCare Clinic — Functional Specification</title>
+<style>
+  :root { --primary: #0ea5e9; --accent: #6366f1; --bg: #ffffff; --surface: #f8fafc; --border: #e2e8f0; --text: #1e293b; --muted: #64748b; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--text); background: var(--bg); line-height: 1.7; }
+  .header { background: linear-gradient(135deg, #0c4a6e, #0369a1); color: #fff; padding: 48px 24px; text-align: center; }
+  .header h1 { font-size: 2.2rem; margin-bottom: 8px; }
+  .header p { font-size: 1.1rem; opacity: 0.85; }
+  .header .badge { display: inline-block; background: rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 20px; margin-top: 12px; font-size: 0.9rem; }
+  .container { max-width: 920px; margin: 0 auto; padding: 32px 24px; }
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 32px; margin-bottom: 40px; }
+  .toc h2 { font-size: 1.1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin-bottom: 4px; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  section { margin-bottom: 48px; }
+  h2 { font-size: 1.6rem; color: #0c4a6e; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 3px solid var(--primary); }
+  h3 { font-size: 1.15rem; color: var(--accent); margin: 20px 0 8px; }
+  p, li { margin-bottom: 8px; }
+  ul, ol { padding-left: 24px; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 0.95rem; }
+  th { background: #0c4a6e; color: #fff; padding: 10px 14px; text-align: left; font-weight: 600; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  tr:nth-child(even) { background: var(--surface); }
+  .rule-box { background: #f0f9ff; border-left: 4px solid var(--primary); padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+  .rule-box strong { color: #0369a1; }
+  .security-box { background: #fef2f2; border-left: 4px solid #dc2626; padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+  .security-box strong { color: #dc2626; }
+  .privacy-box { background: #faf5ff; border-left: 4px solid #7c3aed; padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+  .privacy-box strong { color: #7c3aed; }
+  .perf-box { background: #fffbeb; border-left: 4px solid #d97706; padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+  .perf-box strong { color: #d97706; }
+  .ux-box { background: #f0fdf4; border-left: 4px solid #16a34a; padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+  .ux-box strong { color: #16a34a; }
+  code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: #be185d; }
+  .note { background: #fffbeb; border: 1px solid #fde68a; padding: 12px 16px; border-radius: 8px; margin: 16px 0; font-size: 0.95rem; }
+  .endpoint { font-family: 'Cascadia Code', 'Fira Code', monospace; background: #1e293b; color: #38bdf8; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; }
+  .method { font-weight: 700; margin-right: 4px; }
+  .method-get { color: #22c55e; }
+  .method-post { color: #3b82f6; }
+  .method-put { color: #f59e0b; }
+  .method-delete { color: #ef4444; }
+  footer { text-align: center; padding: 24px; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 40px; }
+  @media print { .header { padding: 24px; } .container { padding: 16px; } section { page-break-inside: avoid; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏥 MediCare Clinic — Functional Specification</h1>
+  <p>System Requirements &amp; Expected Behavior</p>
+  <div class="badge">Version 1.0 &nbsp;|&nbsp; QA Hackathon Reference Document</div>
+</div>
+
+<div class="container">
+
+<!-- TABLE OF CONTENTS -->
+<nav class="toc">
+  <h2>Table of Contents</h2>
+  <ol>
+    <li><a href="#overview">System Overview</a></li>
+    <li><a href="#roles">User Roles &amp; Access Control</a></li>
+    <li><a href="#auth">Authentication &amp; Session Management</a></li>
+    <li><a href="#patients">Patient Management</a></li>
+    <li><a href="#appointments">Appointment Scheduling</a></li>
+    <li><a href="#doctors">Doctor Dashboard</a></li>
+    <li><a href="#billing">Billing &amp; Invoicing</a></li>
+    <li><a href="#admin">Admin Dashboard</a></li>
+    <li><a href="#security">Security Requirements</a></li>
+    <li><a href="#privacy">Data Privacy Requirements</a></li>
+    <li><a href="#performance">Performance Requirements</a></li>
+    <li><a href="#usability">Usability Requirements</a></li>
+    <li><a href="#api">API Endpoints Reference</a></li>
+  </ol>
+</nav>
+
+<!-- 1. SYSTEM OVERVIEW -->
+<section id="overview">
+  <h2>1. System Overview</h2>
+  <p>MediCare Clinic is a web-based clinic management application designed to handle patient registration, appointment scheduling, doctor consultations, and billing. The system serves a <strong>Monday–Friday clinic</strong> with multiple doctors across various specializations.</p>
+
+  <h3>Technology Stack</h3>
+  <ul>
+    <li><strong>Frontend:</strong> React single-page application</li>
+    <li><strong>Backend:</strong> Node.js REST API with Express</li>
+    <li><strong>Database:</strong> SQLite</li>
+    <li><strong>Authentication:</strong> JWT (JSON Web Tokens)</li>
+    <li><strong>API Documentation:</strong> Swagger UI at <code>/api-docs</code></li>
+  </ul>
+
+  <h3>Core Modules</h3>
+  <table>
+    <tr><th>Module</th><th>Description</th></tr>
+    <tr><td>Authentication</td><td>User registration, login, profile management</td></tr>
+    <tr><td>Patient Management</td><td>Patient records, search, medical history</td></tr>
+    <tr><td>Appointment Scheduling</td><td>Booking, availability checking, cancellation</td></tr>
+    <tr><td>Doctor Dashboard</td><td>Daily schedule, consultation notes, prescriptions</td></tr>
+    <tr><td>Billing</td><td>Invoice generation, discounts, payment tracking</td></tr>
+    <tr><td>Admin Dashboard</td><td>System statistics, user management, oversight</td></tr>
+  </table>
+</section>
+
+<!-- 2. ROLES -->
+<section id="roles">
+  <h2>2. User Roles &amp; Access Control</h2>
+  <p>The system supports three user roles. Each role has specific permissions and should only see data relevant to their function.</p>
+
+  <table>
+    <tr><th>Role</th><th>Can Access</th><th>Restrictions</th></tr>
+    <tr>
+      <td><strong>Patient</strong></td>
+      <td>Own appointments, own profile, booking, billing (own invoices)</td>
+      <td>Cannot view other patients' data. Cannot access admin or doctor dashboards.</td>
+    </tr>
+    <tr>
+      <td><strong>Doctor</strong></td>
+      <td>Own daily schedule, patient records (for their patients), consultation notes, medical history</td>
+      <td>Cannot modify patient demographics. Cannot access billing or admin features.</td>
+    </tr>
+    <tr>
+      <td><strong>Admin</strong></td>
+      <td>All appointments, patient list (demographics only), doctor management, billing, system statistics</td>
+      <td>Should <strong>NOT</strong> have access to patient medical history, prescriptions, or clinical notes — those are doctor-only.</td>
+    </tr>
+  </table>
+
+  <div class="privacy-box">
+    <strong>Data Privacy Rule:</strong> Each role should only see the minimum data necessary for their function. Patient records viewed by admin should exclude medical history and clinical notes. Social Security Numbers (SSN) should be masked or hidden in all views except where explicitly required for billing verification.
+  </div>
+</section>
+
+<!-- 3. AUTH -->
+<section id="auth">
+  <h2>3. Authentication &amp; Session Management</h2>
+
+  <h3>3.1 Registration</h3>
+  <ul>
+    <li>New users register with: first name, last name, <strong>valid email address</strong>, phone, password, and role</li>
+    <li>Email must be a properly formatted email address (e.g., <code>user@domain.com</code>). Invalid formats like <code>test@</code> or <code>user@.com</code> must be rejected</li>
+    <li>Passwords must meet minimum complexity requirements</li>
+    <li>Duplicate email addresses must be rejected</li>
+  </ul>
+
+  <h3>3.2 Login</h3>
+  <ul>
+    <li>Users authenticate with email and password</li>
+    <li>Failed login attempts should return appropriate error messages</li>
+  </ul>
+
+  <div class="security-box">
+    <strong>Security Requirement:</strong> The login endpoint must implement <strong>rate limiting</strong> to prevent brute-force attacks. After multiple consecutive failed attempts, the system should temporarily block or throttle further login requests from the same source.
+  </div>
+
+  <h3>3.3 Session Management</h3>
+  <ul>
+    <li>Sessions are managed via JWT tokens</li>
+    <li>Tokens should expire within a <strong>reasonable timeframe</strong> (industry standard: 15 minutes to 1 hour for sensitive healthcare data)</li>
+    <li>The system should support token refresh/rotation to maintain active sessions without long-lived tokens</li>
+  </ul>
+
+  <div class="security-box">
+    <strong>Security Requirement:</strong> API responses must <strong>never</strong> include sensitive credential data such as password hashes, salts, or tokens in profile or user detail endpoints. Only non-sensitive user attributes (name, email, role) should be returned.
+  </div>
+</section>
+
+<!-- 4. PATIENTS -->
+<section id="patients">
+  <h2>4. Patient Management</h2>
+
+  <h3>4.1 Patient List</h3>
+  <ul>
+    <li>Displays all active patients with: name, email, phone, date of birth, age</li>
+    <li><strong>Age Calculation:</strong> The patient's age must be accurately calculated from their date of birth. The calculation should correctly handle edge cases: birthdays that fall today, leap year birthdays (Feb 29), and year boundaries (Dec 31 / Jan 1)</li>
+    <li><strong>Deleted Records:</strong> Patients that have been deleted (soft-deleted) must <strong>not</strong> appear in any listing or search results. Once deleted, records should be completely hidden from all users</li>
+  </ul>
+
+  <h3>4.2 Patient Search</h3>
+  <div class="rule-box">
+    <strong>Business Rule:</strong> Patient search must be <strong>case-insensitive</strong>. Searching for "john", "John", or "JOHN" should all return the same results. The search applies to first name and last name fields.
+  </div>
+
+  <div class="privacy-box">
+    <strong>Data Privacy Rule:</strong> Search queries should use <strong>POST request bodies</strong> or secure methods — <strong>not</strong> URL query parameters. Patient names, SSNs, and other PII must never appear in URLs, as these are recorded in browser history, server access logs, and proxy logs.
+  </div>
+
+  <h3>4.3 Patient Detail View</h3>
+  <ul>
+    <li>Shows full patient profile: demographics, contact info, medical history, prescriptions, insurance</li>
+    <li><strong>Access Control:</strong> A patient can only view and edit <strong>their own</strong> record. Changing the patient ID in the URL or API call must not grant access to another patient's data</li>
+    <li><strong>Medical History Visibility:</strong> Medical history, prescriptions, and clinical notes should <strong>only</strong> be visible to:
+      <ul>
+        <li>The patient themselves</li>
+        <li>Doctors treating that patient</li>
+      </ul>
+      Admin/receptionist users should see demographics and contact info but <strong>not</strong> medical records.
+    </li>
+  </ul>
+
+  <h3>4.4 Patient Deletion</h3>
+  <div class="rule-box">
+    <strong>Business Rule:</strong> Deleting a patient must be a soft-delete operation. The record is marked as deleted in the database but preserved for audit purposes. However, soft-deleted records must <strong>not</strong> be accessible via any API endpoint — they should be completely hidden from all queries and direct ID lookups.
+  </div>
+</section>
+
+<!-- 5. APPOINTMENTS -->
+<section id="appointments">
+  <h2>5. Appointment Scheduling</h2>
+
+  <h3>5.1 Booking an Appointment</h3>
+  <p>Patients (or admins on behalf of patients) can book appointments by selecting a doctor, date, and available time slot.</p>
+
+  <div class="rule-box">
+    <strong>Business Rule — Date Restrictions:</strong>
+    <ul style="margin-top: 8px;">
+      <li>Appointments can <strong>only</strong> be scheduled for <strong>future dates</strong>. Past dates must be blocked/disabled in the date picker and rejected by the server</li>
+      <li>The clinic operates <strong>Monday through Friday only</strong>. Saturday and Sunday must be disabled in the date picker or clearly indicated as unavailable with an explanation</li>
+    </ul>
+  </div>
+
+  <div class="rule-box">
+    <strong>Business Rule — No Double Booking:</strong> A doctor can have <strong>only one appointment per time slot</strong>. If Doctor A is booked for 10:00 AM on June 1st, no other patient can book Doctor A for 10:00 AM on June 1st. The system must enforce this constraint server-side, even if two users submit simultaneously (race condition protection).
+  </div>
+
+  <h3>5.2 Available Time Slots</h3>
+  <ul>
+    <li>Available slots are displayed after selecting a doctor and date</li>
+    <li>The availability endpoint returns time slots that are <strong>not</strong> occupied by active appointments</li>
+    <li><strong>Cancelled appointments must free their time slots.</strong> When an appointment is cancelled, the slot it occupied should become available again for other patients to book</li>
+  </ul>
+
+  <h3>5.3 Appointment List</h3>
+  <ul>
+    <li>Displays appointments with: date, time slot, patient name, doctor name, status</li>
+    <li><strong>Time Display:</strong> All appointment times must display in the <strong>user's local timezone</strong>, not the server's timezone. Users should see times that match their clock</li>
+    <li><strong>Total Count:</strong> The displayed total count of appointments must <strong>exactly match</strong> the actual number of records. If there are 30 appointments, the UI must show "30" — not an approximation or stale count</li>
+  </ul>
+
+  <h3>5.4 Cancelling an Appointment</h3>
+  <ul>
+    <li>Patients and admins can cancel scheduled appointments</li>
+    <li>Cancellation changes the status to "cancelled" and frees the time slot (see 5.2)</li>
+  </ul>
+
+  <h3>5.5 Completing an Appointment</h3>
+  <ul>
+    <li>Doctors can mark appointments as "completed" after the consultation</li>
+    <li>Upon completion, the doctor enters consultation notes and prescription details</li>
+    <li>All text fields in the notes/prescription form must be <strong>sanitized</strong> before storage and display (see Security section)</li>
+  </ul>
+</section>
+
+<!-- 6. DOCTOR DASHBOARD -->
+<section id="doctors">
+  <h2>6. Doctor Dashboard</h2>
+  <p>The doctor dashboard provides an overview of the doctor's daily schedule.</p>
+
+  <h3>6.1 Daily View</h3>
+  <ul>
+    <li>Shows today's appointments by default with option to select other dates</li>
+    <li>Each appointment row displays: time, patient name, contact info, medical history, status, notes</li>
+    <li>Summary statistics: total appointments, completed, pending</li>
+  </ul>
+
+  <h3>6.2 Consultation Notes</h3>
+  <ul>
+    <li>Doctor enters free-text notes and prescription when completing an appointment</li>
+    <li>Notes are stored and displayed in subsequent views of the patient record</li>
+  </ul>
+
+  <div class="security-box">
+    <strong>Security Requirement:</strong> All user-entered text (notes, prescriptions, medical history) must be <strong>properly sanitized</strong> before being rendered in the browser. Raw HTML or JavaScript must <strong>never</strong> execute when displaying stored text. Use text encoding or a sanitization library — never render user content as raw HTML.
+  </div>
+
+  <div class="perf-box">
+    <strong>Performance Requirement:</strong> The doctor dashboard should load efficiently. Patient details for all appointments should be fetched in a <strong>single optimized query</strong> (using JOINs), not through individual queries per appointment. The dashboard should respond within 500ms even with 50+ appointments.
+  </div>
+</section>
+
+<!-- 7. BILLING -->
+<section id="billing">
+  <h2>7. Billing &amp; Invoicing</h2>
+
+  <h3>7.1 Creating an Invoice</h3>
+  <ul>
+    <li>Invoices are created for completed appointments</li>
+    <li>Fields: associated appointment, patient, amount, discount percentage</li>
+    <li>The total is calculated as: <code>total = amount × (1 − discount_percentage / 100)</code></li>
+  </ul>
+
+  <div class="rule-box">
+    <strong>Business Rule — Discount Validation:</strong> The discount percentage must be validated to ensure it falls within the range of <strong>0% to 100%</strong> (inclusive). The system must reject:
+    <ul style="margin-top: 8px;">
+      <li>Negative values (e.g., −50% would incorrectly increase the total)</li>
+      <li>Values exceeding 100% (e.g., 150% would produce a negative total)</li>
+    </ul>
+    Validation must be enforced <strong>both client-side and server-side</strong>.
+  </div>
+
+  <h3>7.2 Invoice List</h3>
+  <ul>
+    <li>Displays all invoices with: date, patient, doctor, amount, discount, total, payment status</li>
+    <li>Patients see only their own invoices; admin sees all</li>
+  </ul>
+
+  <h3>7.3 Payment</h3>
+  <ul>
+    <li>Pending invoices can be marked as "paid"</li>
+    <li>Once paid, the invoice status cannot be reverted</li>
+  </ul>
+</section>
+
+<!-- 8. ADMIN DASHBOARD -->
+<section id="admin">
+  <h2>8. Admin Dashboard</h2>
+  <ul>
+    <li>Displays summary statistics: total patients, total doctors, appointment counts by status</li>
+    <li>Shows recent appointments (last 20) with key details</li>
+    <li>Lists all registered doctors with their specializations and fees</li>
+  </ul>
+
+  <div class="rule-box">
+    <strong>Business Rule:</strong> The appointment count displayed in the admin dashboard must <strong>exactly match</strong> the actual number of appointment records returned by the API. Any discrepancy between the displayed count and the actual data is a defect.
+  </div>
+</section>
+
+<!-- 9. SECURITY -->
+<section id="security">
+  <h2>9. Security Requirements</h2>
+  <p>As a healthcare application handling sensitive patient data, MediCare Clinic must meet the following security standards:</p>
+
+  <table>
+    <tr><th>ID</th><th>Requirement</th><th>Details</th></tr>
+    <tr>
+      <td>SEC-01</td>
+      <td>Input Sanitization</td>
+      <td>All user inputs must be sanitized before storage and display. No raw HTML or script execution should be possible through any text field in the application.</td>
+    </tr>
+    <tr>
+      <td>SEC-02</td>
+      <td>Access Control (IDOR Prevention)</td>
+      <td>Users must only access resources they own or are authorized for. Changing resource IDs in URLs or API requests must not bypass authorization. Server-side ownership validation is required.</td>
+    </tr>
+    <tr>
+      <td>SEC-03</td>
+      <td>Data Minimization in API Responses</td>
+      <td>API responses must return only the data necessary for the requesting function. List endpoints should not include SSN, insurance numbers, or full medical history. Sensitive fields should be available only through authorized detail endpoints.</td>
+    </tr>
+    <tr>
+      <td>SEC-04</td>
+      <td>Secure Token Management</td>
+      <td>JWT tokens must have short expiration times (≤1 hour). Token refresh mechanisms should be implemented. Tokens must never be logged or exposed in API responses.</td>
+    </tr>
+    <tr>
+      <td>SEC-05</td>
+      <td>Brute-Force Protection</td>
+      <td>Login and authentication endpoints must implement rate limiting. After 5 consecutive failed attempts, the account or IP should be temporarily locked.</td>
+    </tr>
+    <tr>
+      <td>SEC-06</td>
+      <td>Credential Protection</td>
+      <td>Password hashes, salts, and authentication tokens must never appear in any API response, including user profile endpoints.</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 10. PRIVACY -->
+<section id="privacy">
+  <h2>10. Data Privacy Requirements</h2>
+  <p>MediCare Clinic handles Protected Health Information (PHI) and must comply with healthcare data privacy standards.</p>
+
+  <table>
+    <tr><th>ID</th><th>Requirement</th><th>Details</th></tr>
+    <tr>
+      <td>PRV-01</td>
+      <td>Role-Based Data Access</td>
+      <td>Medical history, clinical notes, and prescriptions should only be visible to treating doctors and the patient. Admin/receptionist staff see demographics only.</td>
+    </tr>
+    <tr>
+      <td>PRV-02</td>
+      <td>SSN Protection</td>
+      <td>Social Security Numbers must be masked (showing only last 4 digits) in all displays. Full SSN should never appear in list views, appointment responses, or URL parameters.</td>
+    </tr>
+    <tr>
+      <td>PRV-03</td>
+      <td>Audit Logging</td>
+      <td>All access to patient records must be logged with: who accessed, when, what record, and what action. This audit trail supports compliance requirements and security investigations.</td>
+    </tr>
+    <tr>
+      <td>PRV-04</td>
+      <td>Data Retention on Deletion</td>
+      <td>Deleted records must be soft-deleted for compliance but completely hidden from all API endpoints, searches, and listings. No deleted record should be retrievable through any user-facing interface.</td>
+    </tr>
+    <tr>
+      <td>PRV-05</td>
+      <td>PII in Transport</td>
+      <td>Personally Identifiable Information (PII) must never appear in URLs, query parameters, or server logs. Use request bodies (POST) for searching or filtering by sensitive fields.</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 11. PERFORMANCE -->
+<section id="performance">
+  <h2>11. Performance Requirements</h2>
+
+  <table>
+    <tr><th>ID</th><th>Requirement</th><th>Details</th></tr>
+    <tr>
+      <td>PERF-01</td>
+      <td>Server-Side Pagination</td>
+      <td>All list endpoints must implement server-side pagination. Default page size: 20 records. The API should accept <code>page</code> and <code>limit</code> parameters. Returning all records in a single response is not acceptable.</td>
+    </tr>
+    <tr>
+      <td>PERF-02</td>
+      <td>Efficient Database Queries</td>
+      <td>Endpoints must use optimized queries (JOINs) instead of N+1 patterns. Loading a doctor's daily appointments with patient info should require at most 2 queries, not 1 per appointment.</td>
+    </tr>
+    <tr>
+      <td>PERF-03</td>
+      <td>Caching for Static Data</td>
+      <td>Endpoints returning data that changes infrequently (doctor availability for a given date) should implement caching. Repeated identical requests within a short window should not trigger duplicate database queries.</td>
+    </tr>
+    <tr>
+      <td>PERF-04</td>
+      <td>Database Indexing</td>
+      <td>Frequently queried columns (doctor_id, appointment_date, patient_id, status) must have database indexes. Without indexes, query performance degrades linearly as data grows.</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 12. USABILITY -->
+<section id="usability">
+  <h2>12. Usability Requirements</h2>
+
+  <table>
+    <tr><th>ID</th><th>Requirement</th><th>Details</th></tr>
+    <tr>
+      <td>UX-01</td>
+      <td>Loading Indicators</td>
+      <td>All actions that make API calls must show a loading indicator (spinner, disabled button, progress bar). The user must receive visual feedback that their action is being processed.</td>
+    </tr>
+    <tr>
+      <td>UX-02</td>
+      <td>Meaningful Error Messages</td>
+      <td>Error messages must clearly describe what went wrong and, where possible, how to fix it. Generic messages like "Something went wrong" are not acceptable — the error should specify the issue (e.g., "Email address is already registered").</td>
+    </tr>
+    <tr>
+      <td>UX-03</td>
+      <td>Form State Preservation</td>
+      <td>When a form submission fails (validation error, server error), all previously entered data must be preserved. The user should <strong>not</strong> have to re-enter fields that were already correctly filled.</td>
+    </tr>
+    <tr>
+      <td>UX-04</td>
+      <td>Destructive Action Confirmation</td>
+      <td>All irreversible or destructive actions (delete patient, cancel appointment) must present a confirmation dialog before proceeding. One-click destructive actions are not acceptable.</td>
+    </tr>
+    <tr>
+      <td>UX-05</td>
+      <td>Weekend/Holiday Handling</td>
+      <td>Since the clinic operates Monday–Friday, the date picker for appointments should either disable weekends or display a clear message when a weekend date is selected explaining that the clinic is closed.</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 13. API REFERENCE -->
+<section id="api">
+  <h2>13. API Endpoints Reference</h2>
+  <p>The full interactive API documentation is available at <code>/api-docs</code> (Swagger UI). Below is a summary of key endpoints:</p>
+
+  <h3>Authentication</h3>
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+    <tr><td><span class="method method-post">POST</span></td><td><code>/api/auth/register</code></td><td>Register a new user account</td></tr>
+    <tr><td><span class="method method-post">POST</span></td><td><code>/api/auth/login</code></td><td>Authenticate and receive JWT token</td></tr>
+    <tr><td><span class="method method-get">GET</span></td><td><code>/api/auth/profile</code></td><td>Get current user profile</td></tr>
+  </table>
+
+  <h3>Patients</h3>
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+    <tr><td><span class="method method-get">GET</span></td><td><code>/api/patients</code></td><td>List all patients (with optional search)</td></tr>
+    <tr><td><span class="method method-get">GET</span></td><td><code>/api/patients/:id</code></td><td>Get patient details by ID</td></tr>
+    <tr><td><span class="method method-put">PUT</span></td><td><code>/api/patients/:id</code></td><td>Update patient record</td></tr>
+    <tr><td><span class="method method-delete">DELETE</span></td><td><code>/api/patients/:id</code></td><td>Delete (soft-delete) a patient</td></tr>
+  </table>
+
+  <h3>Appointments</h3>
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+    <tr><td><span class="method method-get">GET</span></td><td><code>/api/appointments</code></td><td>List appointments (supports filtering)</td></tr>
+    <tr><td><span class="method method-get">GET</span></td><td><code>/api/appointments/availability</code></td><td>Check doctor availability for a date</td></tr>
+    <tr><td><span class="method method-post">POST</span></td><td><code>/api/appointments</code></td><td>Book a new appointment</td></tr>
+    <tr><td><span class="method method-put">PUT</span></td><td><code>/api/appointments/:id/cancel</code></td><td>Cancel an appointment</td></tr>
+    <tr><td><span class="method method-put">PUT</span></td><td><code>/api/appointments/:id/complete</code></td><td>Mark appointment as completed (with notes)</td></tr>
+  </table>
+
+  <h3>Doctors</h3>
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+    <tr><td><span class="method method-get">GET</span></td><td><code>/api/doctors</code></td><td>List all doctors</td></tr>
+    <tr><td><span class="method method-get">GET</span></td><td><code>/api/doctors/:id</code></td><td>Get doctor details</td></tr>
+    <tr><td><span class="method method-get">GET</span></td><td><code>/api/doctors/:id/appointments</code></td><td>Get doctor's appointments (with date filter)</td></tr>
+  </table>
+
+  <h3>Billing</h3>
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+    <tr><td><span class="method method-get">GET</span></td><td><code>/api/billing</code></td><td>List invoices</td></tr>
+    <tr><td><span class="method method-post">POST</span></td><td><code>/api/billing</code></td><td>Create a new invoice</td></tr>
+    <tr><td><span class="method method-get">GET</span></td><td><code>/api/billing/:id</code></td><td>Get invoice details</td></tr>
+    <tr><td><span class="method method-put">PUT</span></td><td><code>/api/billing/:id/pay</code></td><td>Mark invoice as paid</td></tr>
+  </table>
+
+  <div class="note">
+    <strong>💡 Tip:</strong> Use the Swagger UI at <code>/api-docs</code> to explore and test API endpoints interactively. You can also use tools like Postman, curl, or browser DevTools to inspect API requests and responses.
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p>MediCare Clinic — QA Hackathon Functional Specification v1.0</p>
+  <p>This document describes the <em>expected</em> system behavior. Your job is to find where the application deviates from these specifications.</p>
+</footer>
+
+</body>
+</html>

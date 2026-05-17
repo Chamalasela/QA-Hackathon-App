@@ -22,7 +22,6 @@ export default function Appointments({ user }) {
   }
 
   const handleCancel = async (id) => {
-    /* BUG U4: No confirmation dialog — cancels immediately on click */
     try {
       await api.cancelAppointment(id)
       loadAppointments()
@@ -35,7 +34,6 @@ export default function Appointments({ user }) {
     <div className="card">
       <div className="detail-header">
         <h2>{user.role === 'patient' ? 'My Appointments' : 'All Appointments'}</h2>
-        {/* BUG F9: Shows incorrect total count */}
         <span style={{ color: '#757575', fontSize: '0.9em' }}>Total: {appointments.total} appointments</span>
       </div>
       {error && <div className="alert alert-error">{error}</div>}
@@ -55,7 +53,6 @@ export default function Appointments({ user }) {
           {(appointments.data || []).map(a => (
             <tr key={a.id}>
               <td>{a.appointment_date}</td>
-              {/* BUG F6: Time displayed as-is from server (UTC), not converted to local timezone */}
               <td>{a.time_slot}</td>
               {user.role !== 'patient' && <td>{a.patient_first_name} {a.patient_last_name}</td>}
               {user.role !== 'doctor' && <td>Dr. {a.doctor_first_name} {a.doctor_last_name}</td>}

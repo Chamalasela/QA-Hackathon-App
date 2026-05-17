@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Hackathon 2026 — MediCare Clinic Challenge</title>
+    <style>
+        :root {
+            --primary: #1a237e;
+            --primary-light: #3949ab;
+            --accent: #00bfa5;
+            --accent-dark: #00897b;
+            --bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #212121;
+            --text-light: #616161;
+            --border: #e0e0e0;
+            --warning: #f57c00;
+            --danger: #d32f2f;
+            --success: #388e3c;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .hero h1 { font-size: 2.5em; margin-bottom: 10px; font-weight: 700; }
+        .hero .tagline { font-size: 1.3em; opacity: 0.9; margin-bottom: 8px; }
+        .hero .date { font-size: 1em; opacity: 0.7; }
+        .hero .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: #fff;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        .container { max-width: 960px; margin: 0 auto; padding: 30px 20px; }
+        .section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+        }
+        .section h2 {
+            color: var(--primary);
+            font-size: 1.5em;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section h2 .num {
+            background: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            flex-shrink: 0;
+        }
+        .section h3 { color: var(--primary-light); margin: 16px 0 8px; font-size: 1.1em; }
+        .section p { margin-bottom: 12px; color: var(--text); }
+        .section ul, .section ol { margin: 10px 0 10px 24px; }
+        .section li { margin-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.95em; }
+        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--primary); color: white; font-weight: 600; }
+        tr:nth-child(even) { background: #fafafa; }
+        tr:hover { background: #f0f0f0; }
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-size: 0.95em;
+        }
+        .alert-warning { background: #fff3e0; border-left: 4px solid var(--warning); color: #e65100; }
+        .alert-danger { background: #ffebee; border-left: 4px solid var(--danger); color: #b71c1c; }
+        .alert-info { background: #e3f2fd; border-left: 4px solid #1976d2; color: #0d47a1; }
+        .alert-success { background: #e8f5e9; border-left: 4px solid var(--success); color: #1b5e20; }
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin: 2px 4px;
+        }
+        .tag-functional { background: #e3f2fd; color: #1565c0; }
+        .tag-security { background: #fce4ec; color: #c62828; }
+        .tag-performance { background: #fff3e0; color: #e65100; }
+        .tag-usability { background: #f3e5f5; color: #6a1b9a; }
+        .tag-privacy { background: #e0f2f1; color: #00695c; }
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 18px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+        .timeline-item .time { font-weight: 700; color: var(--primary); font-size: 0.9em; }
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .role-card {
+            text-align: center;
+            padding: 20px 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .role-card .role-icon { font-size: 2em; margin-bottom: 8px; }
+        .role-card .role-title { font-weight: 700; color: var(--primary); font-size: 0.9em; }
+        .role-card .role-count { color: var(--text-light); font-size: 0.85em; }
+        .checklist { list-style: none; margin-left: 0; }
+        .checklist li { padding: 6px 0; padding-left: 28px; position: relative; }
+        .checklist li::before {
+            content: '☐';
+            position: absolute;
+            left: 0;
+            font-size: 1.1em;
+        }
+        .score-bar {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .score-bar .label { width: 180px; font-weight: 600; font-size: 0.9em; }
+        .score-bar .bar {
+            flex: 1;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 0 12px;
+        }
+        .score-bar .bar-fill {
+            height: 100%;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            font-size: 0.75em;
+            font-weight: 700;
+            color: white;
+        }
+        .score-bar .points { font-weight: 700; min-width: 60px; text-align: right; font-size: 0.9em; }
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+        @media print {
+            .hero { padding: 30px 20px; }
+            .section { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8em; }
+            .container { padding: 16px 12px; }
+            .section { padding: 20px 16px; }
+            table { font-size: 0.85em; }
+            th, td { padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>🏥 QA Hackathon 2026</h1>
+    <div class="tagline">MediCare Clinic Challenge</div>
+    <div class="date">AI-Powered QA in Action</div>
+    <div class="badge">6 Teams • 90 Minutes • Unlimited AI Tools</div>
+</div>
+
+<div class="container">
+
+    <!-- Section 1: Welcome -->
+    <div class="section">
+        <h2><span class="num">1</span> Welcome & Objective</h2>
+        <p>Welcome to the <strong>QA Hackathon 2026</strong>! This is your chance to push beyond traditional QA — leveraging <strong>AI tools</strong> to test smarter, faster, and more creatively.</p>
+        <p>You'll be given a <strong>Clinic Appointment & Patient Management System</strong> (MediCare Clinic). Your mission: find bugs, write test cases, automate UI tests, and present your strategy — all within <strong>90 minutes</strong>.</p>
+        <div class="alert alert-info">
+            <strong>💡 Key Goal:</strong> Demonstrate how AI tools can accelerate QA activities — bug discovery, test case writing, data generation, automation scripting, and reporting.
+        </div>
+    </div>
+
+    <!-- Section 2: The System -->
+    <div class="section">
+        <h2><span class="num">2</span> The System: MediCare Clinic</h2>
+        <p>MediCare Clinic is a web-based clinic management application with the following modules:</p>
+        
+        <h3>Core Features</h3>
+        <ul>
+            <li><strong>Authentication & User Management</strong> — Patient registration, login, password reset, role-based access</li>
+            <li><strong>Patient Management</strong> — Patient profiles (personal info, medical history, insurance), search, edit</li>
+            <li><strong>Appointment Booking</strong> — Select doctor, date & time slot, view availability, cancel/reschedule</li>
+            <li><strong>Doctor Dashboard</strong> — View today's appointments, add prescriptions/notes, mark complete</li>
+            <li><strong>Admin/Receptionist Dashboard</strong> — View all appointments, manage doctors, reports</li>
+            <li><strong>Billing</strong> — Generate invoices, apply discounts, payment status tracking</li>
+        </ul>
+
+        <h3>User Roles</h3>
+        <table>
+            <tr><th>Role</th><th>Access</th></tr>
+            <tr><td>Patient</td><td>Register, book/cancel appointments, view own history, view invoices</td></tr>
+            <tr><td>Doctor</td><td>View schedule, manage appointments, add prescriptions/notes</td></tr>
+            <tr><td>Receptionist/Admin</td><td>Manage patients, manage doctors, view all appointments, billing</td></tr>
+        </table>
+
+        <h3>Technical Details</h3>
+        <ul>
+            <li><strong>Frontend:</strong> Web application (accessible via browser)</li>
+            <li><strong>Backend:</strong> REST API with full Swagger/OpenAPI documentation</li>
+            <li><strong>Database:</strong> Pre-seeded with sample data (doctors, patients, appointments)</li>
+        </ul>
+    </div>
+
+    <!-- Section 3: Agenda -->
+    <div class="section">
+        <h2><span class="num">3</span> Event Agenda</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="time">Setup Phase (Before Main Event)</div>
+                <p>Verify you can access the centrally-hosted application via the provided URL. Organizers will confirm access and assign your team number.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Briefing — 10 minutes</div>
+                <p>Quick walkthrough of the app, rules recap, Q&A. Then the clock starts!</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Hackathon Work Phase — 90 minutes</div>
+                <p>Find bugs, write test cases, build automation, prepare your demo. The clock is ticking!</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Team Demos — 10 minutes per team</div>
+                <p>Present your strategy, findings, and run your automation suite live.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Automated Scoring & Results</div>
+                <p>Your submissions are evaluated automatically. Final scores announced with awards.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: What's Provided -->
+    <div class="section">
+        <h2><span class="num">4</span> What's Provided to Each Team</h2>
+        <table>
+            <tr><th>Item</th><th>Description</th></tr>
+            <tr><td>🖥️ Application</td><td>Centrally hosted — access via provided URL (no local setup needed). Select your Team number on login.</td></tr>
+            <tr><td>📖 API Documentation</td><td>Swagger UI at <code>{APP_URL}/api-docs</code> — all endpoints documented</td></tr>
+            <tr><td>📊 Test Data</td><td>Pre-seeded: 5 doctors, 20 patients, 30 appointments, sample invoices</td></tr>
+            <tr><td>🔑 Login Credentials</td><td>Test accounts for each role (Patient, Doctor, Admin)</td></tr>
+            <tr><td>📝 Bug Report Template</td><td>CSV file — fill in your findings (columns are fixed)</td></tr>
+            <tr><td>📝 Test Case Template</td><td>CSV file — document your test cases (columns are fixed)</td></tr>
+            <tr><td>📊 PPT Template</td><td>Pre-structured presentation (5-6 slides — just fill content)</td></tr>
+        </table>
+    </div>
+
+    <!-- Section 5: Bug Categories -->
+    <div class="section">
+        <h2><span class="num">5</span> Bug Categories to Explore</h2>
+        <p>The application may contain issues across these categories. Think broadly!</p>
+        
+        <table>
+            <tr><th>Category</th><th>What to Look For</th></tr>
+            <tr>
+                <td><span class="tag tag-functional">Functional</span></td>
+                <td>Features not working as expected, incorrect calculations, validation issues, workflow breakdowns, boundary/edge case failures</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-security">Security</span></td>
+                <td>Authorization flaws, injection vulnerabilities, sensitive data exposure, authentication weaknesses, access control issues</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-performance">Performance</span></td>
+                <td>Slow page loads, inefficient data fetching, missing pagination, operations that don't scale, resource-heavy queries</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-usability">Usability</span></td>
+                <td>Poor user feedback, confusing workflows, missing confirmations, unhelpful error messages, accessibility gaps</td>
+            </tr>
+            <tr>
+                <td><span class="tag tag-privacy">Data Privacy</span></td>
+                <td>Unnecessary data exposure, insufficient access controls on sensitive data, data leaks in APIs, missing audit trails, improper data handling</td>
+            </tr>
+        </table>
+
+        <div class="alert alert-success">
+            <strong>💡 Tip:</strong> Use AI tools to help you think about edge cases, review API responses for data leaks, generate test data for boundary conditions, and identify potential security vulnerabilities.
+        </div>
+    </div>
+
+    <!-- Section 6: Deliverables -->
+    <div class="section">
+        <h2><span class="num">6</span> Deliverables & Submission</h2>
+        
+        <h3>What You Must Produce</h3>
+        <ol>
+            <li><strong>Bug Report (CSV)</strong> — All bugs found, using the provided template</li>
+            <li><strong>Test Cases (CSV)</strong> — Test scenarios documented, using the provided template</li>
+            <li><strong>UI Automation Suite</strong> — Working automated tests (any framework: Playwright, Cypress, Selenium, etc.)</li>
+            <li><strong>Demo Presentation (PPT)</strong> — Using the provided template, filled with your content</li>
+        </ol>
+
+        <h3>How to Submit</h3>
+        <div class="alert alert-warning">
+            <strong>⚠️ Important:</strong> Copy your deliverables to the shared folder: <code>\\submissions\team-N\</code> (where N is your team number). The folder path will be provided on event day.
+        </div>
+        <p>Your submission folder should contain:</p>
+        <ul>
+            <li><code>bug-report.csv</code> — Your completed bug report</li>
+            <li><code>test-cases.csv</code> — Your completed test cases</li>
+            <li><code>automation/</code> — Folder with your automation test suite (include a README with run instructions)</li>
+            <li><code>presentation.pptx</code> — Your completed presentation</li>
+        </ul>
+
+        <div class="alert alert-danger">
+            <strong>🚫 Critical Rule:</strong> Do NOT modify the template column names or structure. The automated evaluation system depends on exact column names. Only fill in the data rows.
+        </div>
+    </div>
+
+    <!-- Section 7: Evaluation & Scoring -->
+    <div class="section">
+        <h2><span class="num">7</span> Evaluation & Scoring</h2>
+        <p>Your team will be scored out of <strong>1000 points</strong> (+ up to 50 bonus points):</p>
+        
+        <div class="score-bar">
+            <span class="label">Bugs Found</span>
+            <div class="bar"><div class="bar-fill" style="width:30%; background: #1565c0;">30%</div></div>
+            <span class="points">300 pts</span>
+        </div>
+        <div class="score-bar">
+            <span class="label">Test Case Coverage</span>
+            <div class="bar"><div class="bar-fill" style="width:25%; background: #2e7d32;">25%</div></div>
+            <span class="points">250 pts</span>
+        </div>
+        <div class="score-bar">
+            <span class="label">UI Automation</span>
+            <div class="bar"><div class="bar-fill" style="width:20%; background: #e65100;">20%</div></div>
+            <span class="points">200 pts</span>
+        </div>
+        <div class="score-bar">
+            <span class="label">Demo & Strategy</span>
+            <div class="bar"><div class="bar-fill" style="width:15%; background: #6a1b9a;">15%</div></div>
+            <span class="points">150 pts</span>
+        </div>
+        <div class="score-bar">
+            <span class="label">AI Tool Usage</span>
+            <div class="bar"><div class="bar-fill" style="width:10%; background: #00695c;">10%</div></div>
+            <span class="points">100 pts</span>
+        </div>
+
+        <h3>How Each Category is Evaluated</h3>
+        <table>
+            <tr><th>Category</th><th>Method</th><th>Details</th></tr>
+            <tr><td>Bugs Found</td><td>Automated</td><td>Your CSV is matched against a master bug list. Points weighted by severity (Critical > High > Medium > Low)</td></tr>
+            <tr><td>Test Cases</td><td>Automated</td><td>Coverage breadth, edge cases, negative scenarios, data-driven tests evaluated</td></tr>
+            <tr><td>UI Automation</td><td>Automated</td><td>Your tests are executed — passing tests, coverage, assertion quality scored</td></tr>
+            <tr><td>Demo & Strategy</td><td>Judges</td><td>Clarity of approach, teamwork, communication, time management</td></tr>
+            <tr><td>AI Tool Usage</td><td>Judges</td><td>How effectively and creatively you leveraged AI tools</td></tr>
+        </table>
+
+        <h3>Bonus Points (up to +50)</h3>
+        <ul>
+            <li><strong>+20</strong> — Finding a legitimate bug not in our master list</li>
+            <li><strong>+15</strong> — Creative automation approach (API + UI combined, data-driven, etc.)</li>
+            <li><strong>+15</strong> — Accessibility or edge-case findings beyond the expected</li>
+        </ul>
+    </div>
+
+    <!-- Section 8: Pre-Requisites -->
+    <div class="section">
+        <h2><span class="num">8</span> Pre-Requisites (Install Before Event)</h2>
+        <div class="alert alert-warning">
+            <strong>⚠️ Install these before the event</strong> to avoid losing valuable hackathon time on setup. The application is centrally hosted — you only need a browser and your automation tools.
+        </div>
+        
+        <h3>Required Software</h3>
+        <ul class="checklist">
+            <li><strong>Web Browser</strong> — Chrome or Edge (latest version)</li>
+            <li><strong>Node.js (LTS v20+)</strong> — <a href="https://nodejs.org/">Download here</a>. Required for automation frameworks.</li>
+            <li><strong>Code Editor</strong> — VS Code recommended (<a href="https://code.visualstudio.com/">Download</a>)</li>
+        </ul>
+
+        <h3>For UI Automation (Choose Your Framework)</h3>
+        <ul class="checklist">
+            <li><strong>Playwright:</strong> <code>npm init playwright@latest</code></li>
+            <li><strong>Cypress:</strong> <code>npm install cypress</code></li>
+            <li><strong>Selenium:</strong> WebDriver + language bindings of your choice</li>
+            <li>Any other framework your team prefers</li>
+        </ul>
+
+        <h3>AI Tools (Your Choice — No Restrictions!)</h3>
+        <ul class="checklist">
+            <li>GitHub Copilot (in VS Code)</li>
+            <li>ChatGPT / Claude / Gemini</li>
+            <li>Postman with AI features</li>
+            <li>Any other AI tools that can help you work faster</li>
+        </ul>
+
+        <div class="alert alert-info">
+            <strong>💡 Pro Tip:</strong> Set up your AI tools and automation framework BEFORE the event. Practice a quick "hello world" test with your chosen framework so you're ready to go.
+        </div>
+    </div>
+
+    <!-- Section 9: Pre-Planning -->
+    <div class="section">
+        <h2><span class="num">9</span> Pre-Planning: Roles & Strategy</h2>
+        <p>You have 5 team members and only 90 minutes. <strong>Planning your roles and strategy beforehand is critical.</strong></p>
+
+        <h3>Suggested Role Distribution</h3>
+        <div class="role-grid">
+            <div class="role-card">
+                <div class="role-icon">🔍</div>
+                <div class="role-title">Bug Hunter</div>
+                <div class="role-count">2 members</div>
+            </div>
+            <div class="role-card">
+                <div class="role-icon">📝</div>
+                <div class="role-title">Test Case Writer</div>
+                <div class="role-count">1 member</div>
+            </div>
+            <div class="role-card">
+                <div class="role-icon">🤖</div>
+                <div class="role-title">Automation Engineer</div>
+                <div class="role-count">1 member</div>
+            </div>
+            <div class="role-card">
+                <div class="role-icon">🔌</div>
+                <div class="role-title">API Tester</div>
+                <div class="role-count">1 member</div>
+            </div>
+        </div>
+
+        <h3>Things to Discuss with Your Team Before the Event</h3>
+        <ul>
+            <li>Who takes which role? (People can overlap/help each other)</li>
+            <li>Which modules will each person focus on?</li>
+            <li>Which AI tools will each person use?</li>
+            <li>Who prepares the demo presentation?</li>
+            <li>How will you communicate findings to each other in real-time?</li>
+            <li>Who handles the final submission (copying files to shared folder)?</li>
+        </ul>
+
+        <div class="alert alert-success">
+            <strong>💡 Winning Strategy:</strong> The teams that do best will be the ones that divide work smartly, use AI tools for <em>every</em> task (not just one), and coordinate efficiently. Think: AI for test case generation, AI for code review to spot bugs, AI for writing automation scripts, AI for generating test data.
+        </div>
+    </div>
+
+    <!-- Section 10: Demo Presentation -->
+    <div class="section">
+        <h2><span class="num">10</span> Demo Presentation (10 Minutes)</h2>
+        <p>Each team gets exactly <strong>10 minutes</strong> to present. The PPT template has these slides pre-structured:</p>
+        
+        <ol>
+            <li><strong>Team Introduction</strong> — Team name, members, roles assigned</li>
+            <li><strong>Strategy & Approach</strong> — How did you plan and divide the work?</li>
+            <li><strong>AI Tools & Techniques</strong> — What AI tools did you use and how?</li>
+            <li><strong>Key Findings</strong> — Summary: X bugs found, Y test cases, Z automated tests</li>
+            <li><strong>Live Demo</strong> — Run your automation suite, show a key bug</li>
+            <li><strong>Lessons Learned</strong> — What would you do differently?</li>
+        </ol>
+
+        <div class="alert alert-warning">
+            <strong>⏱️ Time Limit:</strong> Hard stop at 10 minutes. Judges will warn at 8 minutes. Plan to keep it concise — the PPT template is designed to be filled quickly, not to create a polished deck.
+        </div>
+    </div>
+
+    <!-- Section 11: Rules -->
+    <div class="section">
+        <h2><span class="num">11</span> Rules & Guidelines</h2>
+        <table>
+            <tr><th>Rule</th><th>Detail</th></tr>
+            <tr><td>⏱️ Time Limit</td><td>90 minutes — hard stop. No extensions.</td></tr>
+            <tr><td>📋 Templates</td><td>Column names/structure are FROZEN. Do not rename, add, or remove columns. Only add data rows.</td></tr>
+            <tr><td>🤖 AI Tools</td><td>Any AI tool is allowed and encouraged. Document what you used.</td></tr>
+            <tr><td>🚫 Collaboration</td><td>No inter-team collaboration during the hackathon.</td></tr>
+            <tr><td>❓ Help</td><td>Organizers assist with SETUP issues only — not testing hints or strategy advice.</td></tr>
+            <tr><td>📁 Submission</td><td>Copy all deliverables to the shared folder before time is called.</td></tr>
+            <tr><td>🎤 Demo</td><td>10 minutes max. All team members should participate.</td></tr>
+            <tr><td>⚡ Internet</td><td>Internet access is available for AI tools and research.</td></tr>
+        </table>
+    </div>
+
+    <!-- Section 12: FAQ -->
+    <div class="section">
+        <h2><span class="num">12</span> Frequently Asked Questions</h2>
+        
+        <h3>Can we modify the application code to fix bugs?</h3>
+        <p>No. You are testers, not developers. Find and report bugs — don't fix them.</p>
+        
+        <h3>Can we access the application source code?</h3>
+        <p>No. The application is centrally hosted. You should test it as a black-box through the UI and API (Swagger docs are available). This simulates a real-world QA scenario where you test without seeing the code.</p>
+        
+        <h3>What if I can't access the application URL?</h3>
+        <p>Contact the organizers immediately via the support channel. They will help resolve connectivity issues.</p>
+        
+        <h3>Can we write automation tests in any programming language?</h3>
+        <p>Yes. Use whatever language/framework you're comfortable with. Just make sure the tests are runnable with clear instructions.</p>
+        
+        <h3>Do we need to automate ALL scenarios?</h3>
+        <p>No. Focus on happy-path scenarios for automation. Quality over quantity — a few well-written, passing tests score better than many broken ones.</p>
+        
+        <h3>Can we split the CSV templates across multiple team members?</h3>
+        <p>Work however you want, but submit ONE final bug-report.csv and ONE final test-cases.csv per team. Merge before submitting.</p>
+        
+        <h3>Will we get the API documentation in advance?</h3>
+        <p>The Swagger documentation is available within the running application at <code>/api-docs</code>. You'll access it once you connect to the centrally-hosted app during the event.</p>
+
+        <h3>What counts as "AI Tool Usage" for scoring?</h3>
+        <p>Using AI for: generating test cases, writing automation code, reviewing code for bugs, generating test data, creating reports, analyzing API responses, or anything creative. The more tasks you accelerate with AI, the better.</p>
+    </div>
+
+</div>
+
+<footer>
+    <p>QA Hackathon 2026 — MediCare Clinic Challenge | Organized by the QA Team</p>
+    <p>Questions? Reach out in the #qa-hackathon channel</p>
+</footer>
+
+</body>
+</html>
