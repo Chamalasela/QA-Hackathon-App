@@ -166,15 +166,15 @@ async function seedTeam(teamId) {
 
 async function seed() {
   await initDb();
-  for (let t = 1; t <= 6; t++) {
+  for (let t = 1; t <= 5; t++) {
     await seedTeam(t);
   }
-  console.log('\n✅ All 6 team databases seeded!');
+  console.log('\n✅ All 5 team databases seeded!');
   console.log('\nLogin Credentials (all passwords: Test@123):');
   console.log('  Admin:   admin@test.com');
   console.log('  Doctor:  doctor@test.com');
   console.log('  Patient: patient@test.com');
-  console.log('\nSelect Team 1-6 on the login page.');
+  console.log('\nSelect your team on the login page.');
 }
 
 seed().catch(err => { console.error('Seed failed:', err); process.exit(1); });

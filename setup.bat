@@ -40,10 +40,10 @@ echo  [OK] Backend dependencies installed.
 echo.
 
 :: Seed database
-echo  [2/4] Setting up database...
+echo  [2/4] Setting up database (6 team databases)...
 echo  -----------------------------------------------
 call node src/seed.js
-echo  [OK] Database seeded with test data.
+echo  [OK] All 6 team databases seeded with test data.
 echo.
 
 :: Install frontend dependencies
@@ -90,7 +90,7 @@ echo    Frontend:  http://localhost:3000
 echo    Backend:   http://localhost:4000
 echo    Swagger:   http://localhost:4000/api-docs
 echo.
-echo    Login Credentials:
+echo    Login Credentials (select Team 1-6 on login):
 echo      Admin:   admin@test.com   / Test@123
 echo      Doctor:  doctor@test.com  / Test@123
 echo      Patient: patient@test.com / Test@123

@@ -47,7 +47,7 @@ router.post('/register', (req, res) => {
   }
 
   if (!team_id || !VALID_TEAMS.includes(Number(team_id))) {
-    return res.status(400).json({ error: 'Invalid team. Select a team (1-6).' });
+    return res.status(400).json({ error: 'Invalid team. Select a team (1-5).' });
   }
 
   const db = getDb(Number(team_id));
@@ -99,7 +99,7 @@ router.post('/login', (req, res) => {
   }
 
   if (!team_id || !VALID_TEAMS.includes(Number(team_id))) {
-    return res.status(400).json({ error: 'Invalid team. Select a team (1-6).' });
+    return res.status(400).json({ error: 'Invalid team. Select a team (1-5).' });
   }
 
   const db = getDb(Number(team_id));

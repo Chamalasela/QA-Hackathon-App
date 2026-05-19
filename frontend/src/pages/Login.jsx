@@ -24,32 +24,82 @@ export default function Login({ onLogin }) {
   }
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h1>🏥 MediCare Clinic</h1>
-        <p className="subtitle">Sign in to your account</p>
-        {error && <div className="alert alert-error">{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Team</label>
-            <select value={teamId} onChange={e => setTeamId(e.target.value)}>
-              <option value="">-- Select Team --</option>
-              {[1,2,3,4,5,6].map(t => <option key={t} value={t}>Team {t}</option>)}
-            </select>
+    <div className="login-page">
+      <div className="login-hero">
+        <div className="login-hero-overlay">
+          <div className="login-hero-content">
+            <div className="login-hero-brand">
+              <span className="login-hero-icon">🏥</span>
+              <h1>MediCare Clinic</h1>
+              <p>Comprehensive Healthcare Management System</p>
+            </div>
+            <div className="login-hero-features">
+              <div className="login-hero-feature">
+                <span>📋</span>
+                <span>Appointment Scheduling</span>
+              </div>
+              <div className="login-hero-feature">
+                <span>👨‍⚕️</span>
+                <span>Doctor Management</span>
+              </div>
+              <div className="login-hero-feature">
+                <span>💳</span>
+                <span>Billing & Invoicing</span>
+              </div>
+              <div className="login-hero-feature">
+                <span>📊</span>
+                <span>Patient Records</span>
+              </div>
+            </div>
+            <div className="login-credentials-box">
+              <h4>🔑 Test Credentials</h4>
+              <table>
+                <thead>
+                  <tr><th>Role</th><th>Email</th><th>Password</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Admin</td><td>admin@test.com</td><td>Test@123</td></tr>
+                  <tr><td>Doctor</td><td>doctor@test.com</td><td>Test@123</td></tr>
+                  <tr><td>Patient</td><td>patient@test.com</td><td>Test@123</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div className="form-group">
-            <label>Email</label>
-            <input type="text" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter email" />
+        </div>
+      </div>
+      <div className="login-form-side">
+        <div className="login-form-wrapper">
+          <div className="login-form-header">
+            <h2>Welcome Back</h2>
+            <p>Sign in to your account to continue</p>
           </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password" />
-          </div>
-          <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Sign In</button>
-        </form>
-        <p style={{ textAlign: 'center', marginTop: 16, fontSize: '0.9em' }}>
-          Don't have an account? <Link to="/register">Register here</Link>
-        </p>
+          {error && <div className="alert alert-error">{error}</div>}
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Team</label>
+              <select value={teamId} onChange={e => setTeamId(e.target.value)}>
+                <option value="">-- Select Team --</option>
+                <option value="1">Team Nebula</option>
+                <option value="2">Team Orion</option>
+                <option value="3">Team Nova</option>
+                <option value="4">Team Cosmos</option>
+                <option value="5">Team Andromeda</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input type="text" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email" />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password" />
+            </div>
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '12px', fontSize: '1em' }}>Sign In</button>
+          </form>
+          <p style={{ textAlign: 'center', marginTop: 20, fontSize: '0.9em', color: '#666' }}>
+            Don't have an account? <Link to="/register">Register here</Link>
+          </p>
+        </div>
       </div>
     </div>
   )

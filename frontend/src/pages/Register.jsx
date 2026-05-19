@@ -25,8 +25,8 @@ export default function Register({ onLogin }) {
   }
 
   return (
-    <div className="login-container">
-      <div className="login-card" style={{ width: 500 }}>
+    <div className="register-page">
+      <div className="register-card">
         <h1>🏥 Patient Registration</h1>
         <p className="subtitle">Create your MediCare Clinic account</p>
         {error && <div className="alert alert-error">{error}</div>}
@@ -35,7 +35,11 @@ export default function Register({ onLogin }) {
             <label>Team *</label>
             <select name="team_id" value={form.team_id} onChange={handleChange} required>
               <option value="">-- Select Team --</option>
-              {[1,2,3,4,5,6].map(t => <option key={t} value={t}>Team {t}</option>)}
+              <option value="1">Team Nebula</option>
+              <option value="2">Team Orion</option>
+              <option value="3">Team Nova</option>
+              <option value="4">Team Cosmos</option>
+              <option value="5">Team Andromeda</option>
             </select>
           </div>
           <div className="form-row">

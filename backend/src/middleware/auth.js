@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = 'hackathon-secret-key-2026';
 const JWT_EXPIRY = '7d';
-const VALID_TEAMS = [1, 2, 3, 4, 5, 6];
+const VALID_TEAMS = [1, 2, 3, 4, 5];
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];

@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const DATA_DIR = path.join(__dirname, '..', '..', 'data');
-const VALID_TEAMS = [1, 2, 3, 4, 5, 6];
+const VALID_TEAMS = [1, 2, 3, 4, 5];
 
 // Cache of DB instances per team
 const dbs = {};
@@ -90,7 +90,7 @@ async function initDb(teamId) {
 
 function getDb(teamId) {
   if (!teamId || !VALID_TEAMS.includes(Number(teamId))) {
-    throw new Error('Invalid team ID. Must be 1-6.');
+    throw new Error('Invalid team ID. Must be 1-5.');
   }
   const db = dbs[Number(teamId)];
   if (!db) throw new Error(`Database for team ${teamId} not initialized. Call initDb() first.`);
